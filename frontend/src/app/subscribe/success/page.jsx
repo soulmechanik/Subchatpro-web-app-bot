@@ -1,4 +1,7 @@
 'use client'
+
+export const dynamic = "force-dynamic";
+
 import { useEffect } from 'react'
 import { FiCheckCircle, FiMail, FiArrowRight, FiExternalLink } from 'react-icons/fi'
 import { useSearchParams } from 'next/navigation'
