@@ -2,7 +2,7 @@
 import { useEffect } from 'react'
 import { FiCheckCircle, FiMail, FiArrowRight, FiExternalLink } from 'react-icons/fi'
 import { useSearchParams } from 'next/navigation'
-import styles from './SuccessPage.module.scss'
+import styles from './success.module.scss'
 
 export default function SuccessPage() {
   const searchParams = useSearchParams()

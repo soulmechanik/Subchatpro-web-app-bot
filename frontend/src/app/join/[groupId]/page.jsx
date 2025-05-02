@@ -9,7 +9,7 @@ import {
   FiArrowRight,
   FiSend
 } from 'react-icons/fi';
-import styles from './JoinGroup.module.scss';
+import styles from './joingroup.module.scss';
 import Header from '../../../components/Header/Header';
 
 export default function JoinGroupPage() {
