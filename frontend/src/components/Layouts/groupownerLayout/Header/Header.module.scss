@@ -1,0 +1,79 @@
+// components/Header/Header.module.scss
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 1rem;
+  }
+  
+  .searchBar {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 25px;
+    padding: 0.3rem 1rem;
+    width: 40%;
+    min-width: 250px;
+    
+    .searchIcon {
+      color: #2e7d32;
+    }
+    
+    .searchInput {
+      border: none;
+      background: transparent;
+      margin-left: 0.5rem;
+      width: 100%;
+      font-size: 0.9rem;
+      color: #333333;
+      
+      &:focus {
+        outline: none;
+      }
+      
+      &::placeholder {
+        color: rgba(51, 51, 51, 0.5);
+      }
+    }
+  }
+  
+  .userSection {
+    display: flex;
+    align-items: center;
+    
+    .notificationButton {
+      margin-right: 1.5rem;
+      
+      .notificationIcon {
+        color: #ffffff;
+      }
+    }
+  }
+  
+  .userProfile {
+    display: flex;
+    align-items: center;
+    
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border: 2px solid #ffd700;
+    }
+    
+    .userName {
+      margin-left: 0.8rem;
+      color: #ffffff;
+      font-weight: 500;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .searchBar {
+      width: 60%;
+    }
+    
+    .userName {
+      display: none;
+    }
+  }

@@ -1,0 +1,67 @@
+// components/Sidebar/Sidebar.module.scss
+.sidebarContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+}
+
+.logoContainer {
+  padding: 0 1.5rem 2rem;
+  
+  .logo {
+    width: 100%;
+    max-width: 150px;
+    height: auto;
+  }
+}
+
+.menuList {
+  flex-grow: 1;
+  padding: 0 !important;
+}
+
+.menuItem {
+  padding: 0.8rem 1.5rem !important;
+  margin: 0.2rem 0;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(46, 125, 50, 0.1) !important;
+    
+    .menuIcon {
+      color: #2e7d32 !important;
+    }
+  }
+  
+  &.active {
+    background: rgba(46, 125, 50, 0.15) !important;
+    border-left: 3px solid #ffd700;
+    
+    .menuIcon, .MuiListItemText-primary {
+      color: #2e7d32 !important;
+      font-weight: 600;
+    }
+  }
+}
+
+.menuIcon {
+  color: #666666 !important;
+  min-width: 40px !important;
+}
+
+.footer {
+  margin-top: auto;
+  padding: 1rem 0;
+  border-top: 1px solid rgba(102, 102, 102, 0.1);
+  
+  .logoutButton {
+    padding: 0.8rem 1.5rem !important;
+    
+    &:hover {
+      .menuIcon, .MuiListItemText-primary {
+        color: #d32f2f !important;
+      }
+    }
+  }
+}

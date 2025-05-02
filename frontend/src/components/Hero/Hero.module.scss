@@ -1,0 +1,371 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+.hero {
+  background-color: #0a0a0a;
+  padding: 6rem 2rem;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  color: #fff;
+  margin-top: 3rem;
+
+  a{
+    text-decoration: none;
+  }
+ 
+
+  &Background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 70% 30%, #07ba4f10, transparent 50%),
+                radial-gradient(circle at 30% 70%, #00d2ff10, transparent 50%);
+    z-index: 1;
+  }
+
+  .gridPattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 1;
+  }
+
+  &Container {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  &Grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &Content {
+    max-width: 600px;
+  }
+
+  &Badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: rgba(7, 186, 79, 0.1);
+    color: #07ba4f;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    margin-bottom: 2rem;
+    letter-spacing: 0.05em;
+    gap: 0.5rem;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(7, 186, 79, 0.2);
+  }
+
+  .telegramIcon {
+    fill: #07ba4f;
+  }
+
+  &Title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    color: #fff;
+    
+    @media (max-width: 768px) {
+      font-size: 2.5rem;
+    }
+  }
+
+  .gradientText {
+    background: linear-gradient(90deg, #07ba4f, #00d2ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  &Subtitle {
+    font-size: 1.25rem;
+    color: #bbb;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+    
+    @media (max-width: 768px) {
+      font-size: 1.1rem;
+    }
+  }
+
+  &Cta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    
+    @media (max-width: 480px) {
+      flex-direction: column;
+    }
+  }
+
+  .primaryButton {
+    background: linear-gradient(90deg, #07ba4f, #0a8a3a);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(7, 186, 79, 0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(7, 186, 79, 0.5);
+    }
+  }
+
+  .buttonIcon {
+    margin-left: 0.5rem;
+    transition: transform 0.3s ease;
+  }
+
+  .primaryButton:hover .buttonIcon {
+    transform: translateX(5px);
+  }
+
+  .secondaryButton {
+    background: transparent;
+    color: #07ba4f;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: 1px solid rgba(7, 186, 79, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(7, 186, 79, 0.1);
+      border-color: #07ba4f;
+    }
+  }
+
+  &Features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  &Feature {
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    color: #ddd;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: calc(50% - 0.5rem);
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+  }
+
+  .featureIcon {
+    color: #07ba4f;
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+  }
+
+  /* Dashboard Styles */
+  .dashboardContainer {
+    perspective: 1000px;
+  }
+
+  .dashboard {
+    background: rgba(20, 20, 20, 0.8);
+    border-radius: 16px;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    transform-style: preserve-3d;
+    transition: all 0.5s ease;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(7,186,79,0.1) 0%, transparent 70%);
+      z-index: -1;
+    }
+
+    &:hover {
+      transform: translateY(-5px) rotateX(2deg) rotateY(2deg);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    }
+  }
+
+  .dashboardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0;
+    }
+  }
+
+  .timeFilter {
+    background: rgba(255,255,255,0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(255,255,255,0.2);
+    }
+  }
+
+  .statsRow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .statCard {
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-3px);
+    }
+  }
+
+  .statIcon {
+    font-size: 1.5rem;
+    color: #07ba4f;
+    background: rgba(7,186,79,0.1);
+    padding: 0.5rem;
+    border-radius: 8px;
+  }
+
+  .statValue {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .statLabel {
+    font-size: 0.85rem;
+    color: #bbb;
+  }
+
+  .chartsContainer {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    height: 200px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+  }
+
+  .barChart, .doughnutChart {
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .messagesPreview {
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .previewHeader {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #07ba4f;
+  }
+
+  .messageItem {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    align-items: center;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .messageAvatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #07ba4f, #00d2ff);
+  }
+
+  .messageContent {
+    flex: 1;
+    font-size: 0.9rem;
+  }
+
+  .messageUser {
+    font-weight: 500;
+    color: #fff;
+  }
+
+  .messageTime {
+    font-size: 0.75rem;
+    color: #bbb;
+    margin-top: 0.25rem;
+  }
+}

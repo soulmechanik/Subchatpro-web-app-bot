@@ -1,0 +1,197 @@
+// JoinGroup.module.scss
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 24px;
+    background: #f8fafc;
+  }
+  
+  .card {
+    width: 100%;
+    max-width: 480px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .groupHeader {
+    text-align: center;
+    margin-bottom: 32px;
+    position: relative;
+  }
+  
+  .groupTitle {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 12px;
+  }
+  
+  .groupDescription {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #64748b;
+    margin-bottom: 24px;
+  }
+  
+  .pricingBadge {
+    display: inline-block;
+    background: rgba(109, 40, 217, 0.1);
+    color: #6d28d9;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  
+  .joinForm {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .inputGroup {
+    position: relative;
+  }
+  
+  .inputLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+    margin-bottom: 8px;
+  }
+  
+  .inputIcon {
+    color: #94a3b8;
+    font-size: 16px;
+  }
+  
+  .inputField {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #1e293b;
+    transition: all 0.2s ease;
+    background: #f8fafc;
+  
+    &:focus {
+      outline: none;
+      border-color: #c7d2fe;
+      box-shadow: 0 0 0 3px rgba(199, 210, 254, 0.5);
+      background: white;
+    }
+  
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
+  
+  .submitButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 16px;
+    background: #6d28d9;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+  
+    &:hover {
+      background: #5b21b6;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(109, 40, 217, 0.2);
+    }
+  
+    &:active {
+      transform: translateY(0);
+    }
+  
+    &:disabled {
+      background: #c7d2fe;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+  }
+  
+  .buttonIcon {
+    font-size: 18px;
+    transition: transform 0.2s ease;
+  }
+  
+  .buttonSpinner {
+    animation: spin 1s linear infinite;
+    font-size: 18px;
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  .securityNote {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #f1f5f9;
+    font-size: 13px;
+    color: #64748b;
+  }
+  
+  .securityBadge {
+    background: #f1f5f9;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+  }
+  
+  .loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: 16px;
+    color: #64748b;
+  }
+  
+  .spinner {
+    animation: spin 1s linear infinite;
+    font-size: 24px;
+    color: #6d28d9;
+  }
+  
+  .errorContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+  }
+  
+  .errorText {
+    color: #ef4444;
+    font-size: 16px;
+    font-weight: 500;
+    max-width: 480px;
+    text-align: center;
+  }

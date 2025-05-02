@@ -1,0 +1,89 @@
+Group Owner Onboarding Checklist
+
+1. User Registration
+ Create Registration Page
+
+Collect: Email, Password, Role (GroupOwner)
+
+Include Terms and Conditions
+
+Submit registration form
+
+ Send Email Verification Link
+
+After registration, send a verification email
+
+Include a unique link for email verification
+
+ Update isVerified field in User model when email is verified
+
+Redirect to onboarding page after email verification
+
+2. Onboarding for Group Owners
+ Create Onboarding Page (Post-Verification)
+
+After successful email verification, show onboarding page to the Group Owner
+
+ Collect Group Information
+
+Telegram Group Link (URL)
+
+Group Name
+
+Group Description
+
+Subscription Price
+
+Currency (default NGN)
+
+ Collect Bank Details for Settlement
+
+Account Name
+
+Account Number
+
+Bank Name
+
+ Provide Instructions for Adding Telegram Bot to Group
+
+Show steps for adding the SubChat bot to the group as an admin
+
+Collect Telegram Username
+
+ Final Review of Group Owner’s Information
+
+Group Details (Group Name, Link, Description, etc.)
+
+Bank Account Details
+
+Confirm that everything is accurate
+
+ Store Data in Models
+
+Store Group details in Group model
+
+Store Bank details in GroupOwnerProfile model
+
+Update the User role to GroupOwner
+
+3. Redirect to CMS Dashboard
+ Create CMS Dashboard for Group Owners
+
+Provide access to manage group, subscribers, and earnings
+
+ Redirect to CMS Dashboard
+
+After onboarding, redirect the Group Owner to their CMS dashboard
+
+ Provide Dashboard Features
+
+View active subscribers
+
+Monitor subscription renewals
+
+Manage subscribers (pause/remove users if needed)
+
+View earnings and payments
+
+Manage group settings
+

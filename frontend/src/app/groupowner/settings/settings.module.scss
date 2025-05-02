@@ -1,0 +1,120 @@
+.settingsContainer {
+  max-width: 700px;
+  margin: 4rem auto;
+  padding: 2.5rem;
+  background-color: #fff;
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 60px rgba(122, 90, 248, 0.1);
+  font-family: 'Inter', sans-serif;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #7a5af8;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+  }
+
+  input {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 0.8rem;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fafafa;
+
+    &:focus {
+      outline: none;
+      border-color: #7a5af8;
+      box-shadow: 0 0 0 3px rgba(122, 90, 248, 0.2);
+    }
+
+    &:disabled {
+      background-color: #f4f4f4;
+      color: #888;
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.editBtn,
+.saveBtn,
+.cancelBtn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.editBtn {
+  background: #7a5af8;
+  color: #fff;
+
+  &:hover {
+    background: #6840f5;
+  }
+}
+
+.saveBtn {
+  background-color: #2ecc71;
+  color: white;
+
+  &:hover {
+    background-color: #27ae60;
+  }
+}
+
+.cancelBtn {
+  background-color: #e74c3c;
+  color: white;
+
+  &:hover {
+    background-color: #c0392b;
+  }
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 3rem;
+  color: #888;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

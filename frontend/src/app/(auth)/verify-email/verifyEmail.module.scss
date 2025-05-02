@@ -1,0 +1,55 @@
+.verifyContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f5f5f5;
+  }
+  
+  .card, .cardError {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  .card h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .card p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .button {
+    background: #7a5af8;
+    color: white;
+    padding: 0.8rem 2rem;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+  }
+  
+  .button:hover {
+    background: #5c3bbf;
+  }
+  
+  .loading {
+    font-size: 1.5rem;
+    color: #777;
+  }
+  
+  .cardError {
+    background: #ffe6e6;
+    border: 1px solid #ffcccc;
+  }
+  
+  .cardError h1 {
+    color: #ff4d4d;
+  }
+  
