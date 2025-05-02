@@ -1,0 +1,14 @@
+# Ignore environment files
+.env
+
+# Node modules
+node_modules/
+
+# Next.js build
+.next/
+
+# Log files
+*.log
+
+# MacOS junk
+.DS_Store
