@@ -32,6 +32,9 @@ app.use(cors({
   credentials: true,
 }));
 
+// Explicitly handle OPTIONS requests (preflight)
+app.options('*', cors()); // Handle preflight requests for all routes
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/groupowner', groupOwnerRoutes);
