@@ -7,6 +7,7 @@ const User = require('../models/user');
 const Subscription = require('../models/subscription');
 const Payment = require('../models/payment');
 
+const backendUrl = process.env.BACKEND_URL || "http://localhost:5002/";
 
 // Onboard Group Owner
 
@@ -86,7 +87,7 @@ exports.onboardGroupOwnerController = asyncHandler(async (req, res) => {
       currency
     });
   
-    const shareLink = `http://localhost:5002/join/${newGroup._id}`;
+    const shareLink = `${backendUrl}join/${newGroup._id}`;
     newGroup.shareLink = shareLink;
   
     await newGroup.save();

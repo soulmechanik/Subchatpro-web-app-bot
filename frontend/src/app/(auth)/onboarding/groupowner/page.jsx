@@ -141,7 +141,7 @@ export default function GroupOwnerRegistration() {
 
     try {
       // First onboard the user
-      const userRes = await fetch('http://localhost:5002/api/groupowner/onboard', {
+      const userRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/onboard`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ export default function GroupOwnerRegistration() {
       }
 
       // Then create the group
-      const groupRes = await fetch('http://localhost:5002/api/groupowner/creategroup', {
+      const groupRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/creategroup`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -180,6 +180,7 @@ export default function GroupOwnerRegistration() {
           currency: formData.currency
         }),
       });
+      
 
       if (!groupRes.ok) {
         const errorData = await groupRes.json();

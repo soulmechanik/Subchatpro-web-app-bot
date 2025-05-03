@@ -19,7 +19,7 @@ export default function VerifyEmailContent() {
     const verifyEmail = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5002/api/auth/verify-email?token=${token}&id=${id}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/verify-email?token=${token}&id=${id}`
         );
         setStatus('success');
         setMessage(res.data.message);

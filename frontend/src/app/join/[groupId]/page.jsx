@@ -32,16 +32,16 @@ export default function JoinGroupPage() {
     const fetchGroup = async () => {
       if (!groupId) return;
       try {
-        const res = await fetch(`http://localhost:5002/api/groups/${groupId}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/groups/${groupId}`);
         const contentType = res.headers.get('content-type');
-
+  
         if (!res.ok) {
           const errData = contentType?.includes('application/json')
             ? await res.json()
             : { message: await res.text() };
           throw new Error(errData.message || 'Failed to fetch group info');
         }
-
+  
         const data = await res.json();
         setGroup(data);
       } catch (err) {
@@ -51,7 +51,7 @@ export default function JoinGroupPage() {
         setLoading(false);
       }
     };
-
+  
     fetchGroup();
   }, [groupId]);
 
@@ -83,7 +83,7 @@ export default function JoinGroupPage() {
         callback_url: `${window.location.origin}/subscription/callback`
       };
 
-      const res = await fetch('http://localhost:5002/api/subscribe/initialize', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/subscribe/initialize`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

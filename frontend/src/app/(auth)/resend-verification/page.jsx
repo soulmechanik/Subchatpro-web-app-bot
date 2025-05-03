@@ -16,7 +16,7 @@ export default function ResendVerificationPage() {
 
     setStatus('loading');
     try {
-      const res = await axios.post('http://localhost:5002/api/auth/resend-verification', { email });
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/resend-verification`, { email });
       setStatus('success');
       setMessage(res.data.message);
     } catch (error) {

@@ -32,22 +32,22 @@ export default function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSubmitted(true)
-
+  
     if (!allValid || !role) {
       if (!role) setError('Please select a role.')
       return
     }
-
+  
     setLoading(true)
     setError('')
-
+  
     try {
-      const response = await axios.post('http://localhost:5002/api/auth/register', {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/register`, {
         email,
         password,
         role
       })
-
+  
       console.log('Registration Success:', response.data)
       setSuccess(true)
     } catch (err) {

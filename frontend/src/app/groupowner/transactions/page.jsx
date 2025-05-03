@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import styles from './Transactions.module.scss';
 import Layout from '../../../components/Layouts/groupownerLayout/Layout';
 
-const API_BASE_URL = 'http://localhost:5002/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL; // Use environment variable here
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
@@ -26,7 +26,7 @@ const Transactions = () => {
           throw new Error('Authentication required. Please login.');
         }
 
-        const response = await axios.get(`${API_BASE_URL}/transactions`, {
+        const response = await axios.get(`${API_BASE_URL}/api/transactions`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'

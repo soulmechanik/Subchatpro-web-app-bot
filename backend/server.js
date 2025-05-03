@@ -26,7 +26,7 @@ app.use('/api/subscribe/paystack/webhook', bodyParser.raw({ type: 'application/j
 
 // CORS Configuration
 app.use(cors({
-  origin: 'http://localhost:3000', // Update this for production
+  origin: 'https://www.subchatpro.com', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -37,7 +37,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/groupowner', groupOwnerRoutes);
 app.use('/api/groups', groupRoutes);
 app.use('/api/subscribe', subscriptionRoutes);
-app.use('/api/subscribe/paystack/webhook', paystackWebhookRoutes); // Correct webhook route
+app.use('/api/subscribe/paystack/webhook', paystackWebhookRoutes); 
 app.use('/api/transactions', transactionRoutes);
 
 // Connect to MongoDB and start server

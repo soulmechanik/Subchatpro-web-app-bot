@@ -40,7 +40,7 @@ export default function GroupsPage() {
 
   const fetchGroups = async () => {
     try {
-      const response = await fetch('http://localhost:5002/api/groupowner/groups', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/groups`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -95,7 +95,7 @@ export default function GroupsPage() {
     
     setIsSubmitting(true)
     try {
-      const response = await fetch('http://localhost:5002/api/groupowner/creategroup', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/creategroup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,6 +103,7 @@ export default function GroupsPage() {
         },
         body: JSON.stringify(formData)
       })
+      
 
       if (!response.ok) {
         const errorData = await response.json()

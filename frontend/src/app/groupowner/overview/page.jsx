@@ -59,7 +59,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await fetch('http://localhost:5002/api/groupowner/overview', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/overview`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
@@ -74,7 +74,7 @@ export default function Dashboard() {
         setLoading(false)
       }
     }
-
+  
     fetchDashboardData()
   }, [])
 

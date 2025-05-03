@@ -30,8 +30,10 @@ export default function LoginPage() {
     setError('')
 
     try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5002"; // fallback to localhost
+
       const response = await axios.post(
-        'http://localhost:5002/api/auth/login',
+        `${backendUrl}/api/auth/login`, // Use the dynamic backend URL
         { email, password },
         { withCredentials: true } // ✅ Store cookies from backend
       )

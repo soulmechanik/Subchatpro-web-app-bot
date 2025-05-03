@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './settings.module.scss';
-import Layout from '@/components/Layouts/groupownerLayout/Layout'
+import Layout from '@/components/Layouts/groupownerLayout/Layout';
 
 const SettingsPage = () => {
   const [profile, setProfile] = useState(null);
@@ -24,7 +24,7 @@ const SettingsPage = () => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5002/api/groupowner/settings', {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/settings`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setProfile(res.data);
@@ -62,7 +62,7 @@ const SettingsPage = () => {
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.put('http://localhost:5002/api/groupowner/settings', formData, {
+      const res = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/settings`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProfile(res.data.updatedProfile);
@@ -76,85 +76,84 @@ const SettingsPage = () => {
 
   return (
     <>
-    
-   <Layout>
-    <div className={styles.settingsContainer}>
-      <h1 className={styles.title}>Profile Settings</h1>
+      <Layout>
+        <div className={styles.settingsContainer}>
+          <h1 className={styles.title}>Profile Settings</h1>
 
-      <div className={styles.card}>
-        <div className={styles.formGroup}>
-          <label>Name</label>
-          <input
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            disabled={!editing}
-          />
-        </div>
+          <div className={styles.card}>
+            <div className={styles.formGroup}>
+              <label>Name</label>
+              <input
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                disabled={!editing}
+              />
+            </div>
 
-        <div className={styles.formGroup}>
-          <label>Phone Number</label>
-          <input
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-            disabled={!editing}
-          />
-        </div>
+            <div className={styles.formGroup}>
+              <label>Phone Number</label>
+              <input
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                disabled={!editing}
+              />
+            </div>
 
-        <div className={styles.formGroup}>
-          <label>Telegram Username</label>
-          <input
-            name="telegramUsername"
-            value={formData.telegramUsername}
-            onChange={handleChange}
-            disabled={!editing}
-          />
-        </div>
+            <div className={styles.formGroup}>
+              <label>Telegram Username</label>
+              <input
+                name="telegramUsername"
+                value={formData.telegramUsername}
+                onChange={handleChange}
+                disabled={!editing}
+              />
+            </div>
 
-        <div className={styles.formGroup}>
-          <label>Bank Account Name</label>
-          <input
-            name="bankDetails.accountHolderName"
-            value={formData.bankDetails.accountHolderName}
-            onChange={handleChange}
-            disabled={!editing}
-          />
-        </div>
+            <div className={styles.formGroup}>
+              <label>Bank Account Name</label>
+              <input
+                name="bankDetails.accountHolderName"
+                value={formData.bankDetails.accountHolderName}
+                onChange={handleChange}
+                disabled={!editing}
+              />
+            </div>
 
-        <div className={styles.formGroup}>
-          <label>Bank Account Number</label>
-          <input
-            name="bankDetails.accountNumber"
-            value={formData.bankDetails.accountNumber}
-            onChange={handleChange}
-            disabled={!editing}
-          />
-        </div>
+            <div className={styles.formGroup}>
+              <label>Bank Account Number</label>
+              <input
+                name="bankDetails.accountNumber"
+                value={formData.bankDetails.accountNumber}
+                onChange={handleChange}
+                disabled={!editing}
+              />
+            </div>
 
-        <div className={styles.formGroup}>
-          <label>Bank Name</label>
-          <input
-            name="bankDetails.bankName"
-            value={formData.bankDetails.bankName}
-            onChange={handleChange}
-            disabled={!editing}
-          />
-        </div>
+            <div className={styles.formGroup}>
+              <label>Bank Name</label>
+              <input
+                name="bankDetails.bankName"
+                value={formData.bankDetails.bankName}
+                onChange={handleChange}
+                disabled={!editing}
+              />
+            </div>
 
-        <div className={styles.actions}>
-          {editing ? (
-            <>
-              <button onClick={handleUpdate} className={styles.saveBtn}>Save</button>
-              <button onClick={() => setEditing(false)} className={styles.cancelBtn}>Cancel</button>
-            </>
-          ) : (
-            <button onClick={() => setEditing(true)} className={styles.editBtn}>Edit Profile</button>
-          )}
+            <div className={styles.actions}>
+              {editing ? (
+                <>
+                  <button onClick={handleUpdate} className={styles.saveBtn}>Save</button>
+                  <button onClick={() => setEditing(false)} className={styles.cancelBtn}>Cancel</button>
+                </>
+              ) : (
+                <button onClick={() => setEditing(true)} className={styles.editBtn}>Edit Profile</button>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    </Layout>
+      </Layout>
     </>
   );
 };

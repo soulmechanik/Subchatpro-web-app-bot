@@ -16,7 +16,9 @@ export default function ForgotpasswordPage() {
     setMessage('')
 
     try {
-      const response = await await fetch('http://localhost:5002/api/auth/forgot-password', {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5002"; // fallback to localhost
+
+      const response = await fetch(`${backendUrl}/api/auth/forgot-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -25,7 +27,7 @@ export default function ForgotpasswordPage() {
       })
 
       const data = await response.json()
-      
+
       if (data.success) {
         setMessage('Check your email for a password reset link.')
       } else {
