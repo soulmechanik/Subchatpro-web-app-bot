@@ -11,6 +11,7 @@ import {
   Facebook,
   Email,
   Phone,
+ 
   LocationOn
 } from '@mui/icons-material';
 
@@ -18,12 +19,12 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [
-    { icon: <Twitter />, name: 'Twitter', url: 'https://twitter.com/subchatpro' },
-    { icon: <Instagram />, name: 'Instagram', url: 'https://instagram.com/subchatpro' },
+
+    { icon: <Instagram />, name: 'Instagram', url: 'Instagram.com/subchatpro' },
     { icon: <Telegram />, name: 'Telegram', url: 'https://t.me/subchatpro' },
     { icon: <LinkedIn />, name: 'LinkedIn', url: 'https://linkedin.com/company/subchatpro' },
     { icon: <WhatsApp />, name: 'WhatsApp', url: 'https://wa.me/2341234567890' },
-    { icon: <Facebook />, name: 'Facebook', url: 'https://facebook.com/subchatpro' }
+    { icon: <Facebook />, name: 'Facebook', url: 'TikTok.com/subchatpro' }
   ];
 
   const footerLinks = [
@@ -133,7 +134,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Phone className={styles.contactIcon} />
-                  <span>+234 123 456 7890</span>
+                  <span>08104886969</span>
                 </li>
                 <li>
                   <LocationOn className={styles.contactIcon} />
