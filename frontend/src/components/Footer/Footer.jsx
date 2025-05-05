@@ -20,10 +20,10 @@ export default function Footer() {
 
   const socialLinks = [
 
-    { icon: <Instagram />, name: 'Instagram', url: 'Instagram.com/subchatpro' },
+    { icon: <Instagram />, name: 'Instagram', url: 'https://Instagram.com/subchatpro' },
     { icon: <Telegram />, name: 'Telegram', url: 'https://t.me/subchatpro' },
     { icon: <LinkedIn />, name: 'LinkedIn', url: 'https://linkedin.com/company/subchatpro' },
-    { icon: <WhatsApp />, name: 'WhatsApp', url: 'https://wa.me/2341234567890' },
+    { icon: <WhatsApp />, name: 'WhatsApp', url: 'https://wa.link/g1yjr1' },
     { icon: <Facebook />, name: 'Facebook', url: 'TikTok.com/subchatpro' }
   ];
 
@@ -31,28 +31,18 @@ export default function Footer() {
     {
       title: 'Product',
       links: [
-        { name: 'Features', url: '/features' },
+        { name: 'Features', url: '/about' },
         { name: 'Pricing', url: '/pricing' },
-        { name: 'Integrations', url: '/integrations' },
-        { name: 'Roadmap', url: '/roadmap' }
-      ]
-    },
-    {
-      title: 'Resources',
-      links: [
-        { name: 'Documentation', url: '/docs' },
-        { name: 'API Reference', url: '/api' },
-        { name: 'Guides', url: '/guides' },
-        { name: 'Blog', url: '/blog' }
+
       ]
     },
     {
       title: 'Company',
       links: [
         { name: 'About Us', url: '/about' },
-        { name: 'Careers', url: '/careers' },
+       
         { name: 'Contact', url: '/contact' },
-        { name: 'Press', url: '/press' }
+   
       ]
     }
   ];

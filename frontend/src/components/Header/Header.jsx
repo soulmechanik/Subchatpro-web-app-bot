@@ -22,7 +22,7 @@ const Header = () => {
           animate={{ opacity: 1, x: 0 }}
           className={styles.logo}
         >
-          <span className={styles.logoText}>SubChat</span>
+          <span className={styles.logoText}>SubChatPro</span>
         </motion.div>
 
         {/* Desktop Navigation */}
@@ -79,7 +79,7 @@ const Header = () => {
                 { href: "/pricing", text: "Pricing" },
                 { href: "/contact", text: "Contact Us" },
                 { href: "/login", text: "Log In" },
-                { href: "/login", text: "Start Free Trial" }
+                { href: "/login", text: "Register" }
               ].map((item, index) => (
                 <motion.li
                   key={index}

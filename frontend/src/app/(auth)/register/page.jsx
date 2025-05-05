@@ -149,7 +149,7 @@ export default function RegisterPage() {
             >
               <option value="">Select your role</option>
               <option value="GroupOwner">Group Owner</option>
-              <option value="GroupSubscriber">Subscriber</option>
+            
             </select>
           </div>
 

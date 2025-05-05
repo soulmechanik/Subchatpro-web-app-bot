@@ -63,7 +63,7 @@ export default function Contact() {
               <WhatsApp className={styles.contactIcon} />
               <h3>WhatsApp</h3>
               <p>For quick responses</p>
-              <a href="https://wa.me/2341234567890" target="_blank" rel="noopener noreferrer" className={styles.contactLink}>
+              <a href="https://wa.link/g1yjr1" target="_blank" rel="noopener noreferrer" className={styles.contactLink}>
                 +234 123 456 7890 <East />
               </a>
             </motion.div>
