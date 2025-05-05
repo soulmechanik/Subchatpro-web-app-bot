@@ -1,0 +1,166 @@
+.contactPage {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #333;
+    background-color: #fff;
+    min-height: 100vh;
+    padding-top: 80px;
+  
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+  }
+  
+  .heroSection {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    text-align: center;
+  
+    .heroContent {
+      max-width: 700px;
+      margin: 0 auto;
+  
+      h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #111;
+  
+        span {
+          background: linear-gradient(90deg, #07ba4f, #00d2ff);
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+  
+        @media (max-width: 768px) {
+          font-size: 2.5rem;
+        }
+      }
+  
+      .subtitle {
+        font-size: 1.2rem;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 0;
+      }
+    }
+  }
+  
+  .contactGrid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .contactMethods {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: 600px;
+  
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .contactCard {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+  
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+  
+    .contactIcon {
+      color: #07ba4f;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+  
+    h3 {
+      font-size: 1.2rem;
+      margin: 0 0 8px 0;
+      color: #111;
+    }
+  
+    p {
+      color: #666;
+      margin: 0 0 20px 0;
+      font-size: 0.95rem;
+    }
+  }
+  
+  .contactLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #07ba4f;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+  
+    &:hover {
+      color: #00d2ff;
+      gap: 12px;
+    }
+  }
+  
+  .ctaSection {
+    max-width: 1200px;
+    margin: 0 auto 80px;
+    padding: 0 20px;
+  }
+  
+  .ctaCard {
+    background: linear-gradient(135deg, #f5fdf8, #f0fbfe);
+    border-radius: 16px;
+    padding: 60px 40px;
+    text-align: center;
+    border: 1px solid rgba(7, 186, 79, 0.1);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+  
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 16px;
+      color: #111;
+    }
+  
+    p {
+      color: #666;
+      max-width: 600px;
+      margin: 0 auto 30px auto;
+      font-size: 1.1rem;
+    }
+  }
+  
+  .ctaButton {
+    background: linear-gradient(90deg, #07ba4f, #00d2ff);
+    color: white;
+    padding: 16px 32px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(7, 186, 79, 0.2);
+  
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(7, 186, 79, 0.3);
+    }
+  }
+  

@@ -1,0 +1,621 @@
+// Updated Color Variables with Your Scheme
+$primary: #07ba4f;
+$secondary: #0a8a3a;
+$accent: #00d2ff;
+$dark: #141414;
+$light: #fff;
+$success: #07ba4f;
+$warning: #fca311;
+$danger: #e63946;
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin gradient-text {
+  background: linear-gradient(90deg, $primary, $accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+// Base Styles
+.aboutPage {
+  font-family: 'Inter', sans-serif;
+  color: $dark;
+  line-height: 1.6;
+  overflow-x: hidden;
+  background-color: $light;
+  padding-top: 4rem;
+
+
+  button{
+    cursor: pointer;
+  }
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+  
+  h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    
+    span {
+      @include gradient-text;
+    }
+  }
+  
+  p {
+    font-size: 1.1rem;
+    color: #bbb;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+// Hero Section
+
+
+// Features Section
+.featuresSection {
+  padding: 6rem 1rem;
+  background: $light;
+  position: relative;
+
+  .featuresGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .featureCard {
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(7, 186, 79, 0.1);
+    z-index: 1;
+    backdrop-filter: blur(5px);
+
+    .iconWrapper {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      @include flex-center;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+      background: rgba(7, 186, 79, 0.1);
+      border: 1px solid rgba(7, 186, 79, 0.2);
+
+      svg {
+        color: $primary;
+      }
+    }
+
+    h3 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      color: $dark;
+    }
+
+    p {
+      color: #bbb;
+      margin-bottom: 1rem;
+    }
+
+    .hoverIndicator {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 4px;
+      z-index: -1;
+      background: $primary;
+    }
+
+    &:hover {
+      border-color: rgba(7, 186, 79, 0.3);
+      box-shadow: 0 10px 30px rgba(7, 186, 79, 0.2);
+      transform: translateY(-5px);
+    }
+  }
+}
+
+// How It Works Section
+.howItWorks {
+  padding: 6rem 1rem;
+  background: $light;
+  position: relative;
+
+  .stepsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(7, 186, 79, 0.2), transparent);
+      z-index: 0;
+    }
+  }
+
+  .stepCard {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    width: 300px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 1px solid rgba(7, 186, 79, 0.1);
+    transition: all 0.3s ease;
+
+    .stepNumber {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, $primary, $accent);
+      color: white;
+      @include flex-center;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+
+    .stepContent {
+      h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        color: $dark;
+      }
+
+      p {
+        color: #bbb;
+        font-size: 0.9rem;
+      }
+    }
+
+    .stepConnector {
+      position: absolute;
+      top: 50%;
+      right: -30px;
+      transform: translateY(-50%);
+      color: $primary;
+      opacity: 0.5;
+    }
+
+    &:hover {
+      box-shadow: 0 10px 30px rgba(7, 186, 79, 0.2);
+      transform: translateY(-5px);
+    }
+  }
+}
+
+// FAQ Section
+.faqSection {
+  padding: 6rem 1rem;
+  background: rgba(7, 186, 79, 0.03);
+
+  .faqContainer {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .faqItem {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(7, 186, 79, 0.1);
+
+    &.active {
+      box-shadow: 0 5px 20px rgba(7, 186, 79, 0.2);
+      border-color: rgba(7, 186, 79, 0.3);
+    }
+
+    .faqQuestion {
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(5px);
+
+      h3 {
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: $dark;
+
+        .faqIcon {
+          color: $primary;
+          font-size: 1.2rem;
+        }
+      }
+
+      svg {
+        transition: transform 0.3s ease;
+        color: $primary;
+      }
+    }
+
+    .faqAnswer {
+      padding: 0 1.5rem 1.5rem;
+      color: #777;
+      background: white;
+    }
+
+    &.active {
+      .faqQuestion svg {
+        transform: rotate(180deg);
+      }
+    }
+
+    &:hover {
+      border-color: rgba(7, 186, 79, 0.3);
+    }
+  }
+}
+
+// CTA Section
+.ctaSection {
+  padding: 6rem 1rem;
+  background: linear-gradient(135deg,rgb(1, 18, 20) , green);
+  color: white;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 70% 30%, rgba(7, 186, 79, 0.2), transparent 50%),
+                radial-gradient(circle at 30% 70%, rgba(0, 210, 255, 0.2), transparent 50%);
+    z-index: 0;
+  }
+
+  .ctaCard {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 3rem 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    border: 1px solid rgba(255,255,255,0.1);
+    position: relative;
+    z-index: 1;
+
+    .ctaIcon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: white;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 2rem;
+    }
+
+    .ctaButton {
+      background: white;
+      color: $primary;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0 auto;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      }
+    }
+  }
+}
+
+// Responsive Styles
+@media (max-width: 1024px) {
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    min-height: auto;
+    padding: 4rem 1rem;
+
+    .heroContent {
+      max-width: 100%;
+      margin-bottom: 3rem;
+
+      .ctaContainer {
+        justify-content: center;
+      }
+    }
+  }
+
+  .howItWorks {
+    .stepsContainer {
+      &::before {
+        display: none;
+      }
+    }
+
+    .stepCard {
+      width: 100%;
+      max-width: 400px;
+
+      .stepConnector {
+        position: static;
+        transform: none;
+        margin: 1rem 0;
+        transform: rotate(90deg);
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .sectionHeader h2 {
+    font-size: 2rem;
+  }
+
+  .hero {
+    .heroContent {
+      h1 {
+        font-size: 2.5rem;
+      }
+    }
+
+    .heroIllustration {
+      .illustrationContainer {
+        width: 300px;
+        height: 300px;
+      }
+    }
+  }
+
+  .featuresSection, .howItWorks, .faqSection, .ctaSection {
+    padding: 4rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    .heroContent {
+      .ctaContainer {
+        flex-direction: column;
+      }
+    }
+  }
+
+  .ctaSection {
+    .ctaCard {
+      padding: 2rem 1rem;
+
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  }
+}
+
+// About Intro Section
+.aboutIntro {
+    padding: 5rem 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  
+    &::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 70% 30%, rgba(7, 186, 79, 0.1), transparent 50%);
+    }
+  
+    .aboutIntroContent {
+      position: relative;
+      z-index: 2;
+  
+      .badge {
+        @include flex-center;
+        gap: 0.5rem;
+        background: rgba(7, 186, 79, 0.1);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        width: fit-content;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: $primary;
+        border: 1px solid rgba(7, 186, 79, 0.2);
+  
+        .badgeIcon {
+          font-size: 1rem;
+        }
+      }
+  
+      .aboutTitle {
+        font-size: 2.8rem;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+        color: $dark;
+  
+        span {
+          @include gradient-text;
+        }
+      }
+  
+      .aboutDescription {
+        p {
+          font-size: 1.1rem;
+          color: #555;
+          margin-bottom: 1.5rem;
+          line-height: 1.7;
+  
+          &:last-child {
+            margin-bottom: 2.5rem;
+          }
+        }
+      }
+  
+      .statsContainer {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 2rem;
+  
+        .statItem {
+          display: flex;
+          align-items: center;
+          gap: 0.8rem;
+          background: rgba(7, 186, 79, 0.05);
+          padding: 1rem 1.5rem;
+          border-radius: 12px;
+          border: 1px solid rgba(7, 186, 79, 0.1);
+  
+          .statIcon {
+            color: $primary;
+            font-size: 1.5rem;
+          }
+  
+          h3 {
+            font-size: 1.2rem;
+            margin: 0;
+            color: $dark;
+          }
+  
+          p {
+            font-size: 0.9rem;
+            margin: 0;
+            color: #777;
+          }
+        }
+      }
+    }
+  
+    .aboutIllustration {
+      position: relative;
+      z-index: 1;
+      @include flex-center;
+  
+      .illustrationContainer {
+        position: relative;
+        width: 400px;
+        height: 400px;
+        background: rgba(7, 186, 79, 0.03);
+        border-radius: 20px;
+        @include flex-center;
+        border: 1px solid rgba(7, 186, 79, 0.1);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+  
+        svg {
+          position: absolute;
+          font-size: 4rem;
+          color: $primary;
+        }
+  
+        .telegramIcon {
+          transform: translate(-50px, -50px);
+        }
+  
+        .paymentIcon {
+          transform: translate(50px, 30px);
+          color: $accent;
+        }
+  
+        .dashboardIcon {
+          transform: translate(0, 60px);
+          font-size: 5rem;
+        }
+      }
+    }
+  }
+  
+  // Responsive adjustments for About Intro
+  @media (max-width: 1024px) {
+    .aboutIntro {
+      grid-template-columns: 1fr;
+      text-align: center;
+      padding: 4rem 1rem;
+  
+      .aboutIntroContent {
+        margin-bottom: 3rem;
+  
+        .badge, .statsContainer {
+          margin-left: auto;
+          margin-right: auto;
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .aboutIntro {
+      .aboutTitle {
+        font-size: 2.2rem;
+      }
+  
+      .aboutIllustration {
+        .illustrationContainer {
+          width: 300px;
+          height: 300px;
+        }
+      }
+  
+      .statsContainer {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  }

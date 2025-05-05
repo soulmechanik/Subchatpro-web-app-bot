@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import ModernLayout from '@/components/Layouts/groupownerLayout/Layout'
-import { FiUsers, FiDollarSign, FiCalendar, FiPlus, FiLink, FiX } from 'react-icons/fi'
+import { FiUsers, FiDollarSign, FiCalendar, FiPlus, FiLink, FiX, FiCopy } from 'react-icons/fi'
 import styles from './groups.module.scss'
 
 // Category options from your schema
@@ -155,6 +155,15 @@ export default function GroupsPage() {
     return category.charAt(0).toUpperCase() + category.slice(1)
   }
 
+  const handleCopyLink = async (link) => {
+    try {
+      await navigator.clipboard.writeText(link)
+      alert('Copied to clipboard!')
+    } catch (err) {
+      console.error('Failed to copy: ', err)
+    }
+  }
+
   if (loading) return (
     <ModernLayout>
       <div className={styles.loadingContainer}>
@@ -225,9 +234,14 @@ export default function GroupsPage() {
                       <FiLink /> Telegram Group
                     </a>
                   )}
-                  <a href={group.shareLink} target="_blank" rel="noopener noreferrer" className={styles.linkButton}>
-                    <FiLink /> Share Link
-                  </a>
+                  <button
+  type="button"
+  onClick={() => handleCopyLink(group.shareLink)}
+  className={styles.linkButton}
+>
+  <FiCopy /> Copy Link
+</button>
+
                 </div>
               </div>
             ))}

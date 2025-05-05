@@ -49,7 +49,7 @@ const Header = () => {
             <Link href="/login" className={styles.loginButton}>Log In</Link>
           </motion.div>
           <motion.div whileHover={{ scale: 1.03 }}>
-            <Link href="/login" className={styles.demoButton}>Start Free Trial</Link>
+            <Link href="/login" className={styles.demoButton}>Get Started</Link>
           </motion.div>
         </div>
 
