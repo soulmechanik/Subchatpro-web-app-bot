@@ -31,6 +31,9 @@ $danger: #e63946;
   background-color: $light;
   padding-top: 4rem;
 
+  a{
+    text-decoration: none;
+  }
 
   button{
     cursor: pointer;

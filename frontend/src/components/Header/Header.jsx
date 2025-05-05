@@ -49,7 +49,7 @@ const Header = () => {
             <Link href="/login" className={styles.loginButton}>Log In</Link>
           </motion.div>
           <motion.div whileHover={{ scale: 1.03 }}>
-            <Link href="/login" className={styles.demoButton}>Get Started</Link>
+            <Link href="/register" className={styles.demoButton}>Register</Link>
           </motion.div>
         </div>
 
@@ -79,7 +79,7 @@ const Header = () => {
                 { href: "/pricing", text: "Pricing" },
                 { href: "/contact", text: "Contact Us" },
                 { href: "/login", text: "Log In" },
-                { href: "/login", text: "Register" }
+                { href: "/register", text: "Register" }
               ].map((item, index) => (
                 <motion.li
                   key={index}

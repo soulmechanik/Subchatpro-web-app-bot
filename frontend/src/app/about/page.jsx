@@ -1,5 +1,5 @@
 'use client';
-
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './about.module.scss';
@@ -292,25 +292,27 @@ const AboutUsPage = () => {
 
       {/* CTA Section */}
       <section className={styles.ctaSection}>
-        <motion.div
-          className={styles.ctaCard}
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          <TrendingUp className={styles.ctaIcon} />
-          <h2>Ready to Monetize Your Telegram Community?</h2>
-          <p>Join hundreds of creators who are already earning with SubChatPro</p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={styles.ctaButton}
-          >
-            Get Started Now <East />
-          </motion.button>
-        </motion.div>
-      </section>
+  <motion.div
+    className={styles.ctaCard}
+    initial={{ opacity: 0, scale: 0.95 }}
+    whileInView={{ opacity: 1, scale: 1 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.5 }}
+  >
+    <TrendingUp className={styles.ctaIcon} />
+    <h2>Ready to Monetize Your Telegram Community?</h2>
+    <p>Join hundreds of creators who are already earning with SubChatPro</p>
+    <Link href="/register">
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className={styles.ctaButton}
+      >
+        Get Started Now <East />
+      </motion.button>
+    </Link>
+  </motion.div>
+</section>
     </div>
     </>
   );

@@ -64,7 +64,7 @@ export default function Contact() {
               <h3>WhatsApp</h3>
               <p>For quick responses</p>
               <a href="https://wa.link/g1yjr1" target="_blank" rel="noopener noreferrer" className={styles.contactLink}>
-                +234 123 456 7890 <East />
+              08104886969 <East />
               </a>
             </motion.div>
             
