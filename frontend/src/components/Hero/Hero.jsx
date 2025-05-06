@@ -84,11 +84,11 @@ const Hero = () => {
               transition={{ duration: 0.6, delay: 0.6 }}
               className={styles.heroCta}
             >
-              <Link href="/login" className={styles.primaryButton}>
+              <Link href="/register" className={styles.primaryButton}>
                 Get Started Now <FiArrowRight className={styles.buttonIcon} />
               </Link>
               <Link href="/login" className={styles.secondaryButton}>
-                Explore Features
+                Sign In
               </Link>
             </motion.div>
 
