@@ -1,17 +1,20 @@
 import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 export function middleware(req) {
   console.log("🔒 SubChat Middleware is running...");
 
-  const role = req.cookies.get("role")?.value;
-  console.log("👤 Detected role from cookie:", role);
+  const token = req.cookies.get("token")?.value; // grab token
+  const role = req.cookies.get("role")?.value;   // grab role
 
-  if (!role) {
-    console.log("❌ No role found, redirecting to /unauthorized");
+  console.log("🔑 Token (cookie):", token);
+  console.log("👤 Role (cookie):", role);
+
+  if (!token || !role) {
+    console.log("❌ No token or role found, redirecting to /unauthorized");
     return NextResponse.redirect(new URL("/unauthorized", req.url));
   }
 
-  // Define protected routes for each role
   const protectedRoutes = {
     GroupOwner: ["/groupowner"],
     GroupSubscriber: ["/subscriber"],
@@ -28,11 +31,11 @@ export function middleware(req) {
     }
   }
 
-  // Allow access if role matches path
+  // ✅ Passed all checks
   return NextResponse.next();
 }
 
-// 👇 Apply middleware only on the dashboard access points
+// 👇 Apply middleware only on these paths
 export const config = {
   matcher: ["/groupowner/:path*", "/subscriber/:path*"],
 };
