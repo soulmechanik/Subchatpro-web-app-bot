@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser'); // 🍪 <--- ADDED THIS
 
 // Routes
 const authRoutes = require('./routes/authRoutes'); // Auth Routes
@@ -22,13 +23,16 @@ const app = express();
 app.use(cors({
   origin: ['https://www.subchatpro.com', 'http://localhost:3000'], // Added localhost for development
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-paystack-signature'], // Added paystack header
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-paystack-signature'],
   credentials: true,
-  optionsSuccessStatus: 200 // For legacy browser support
+  optionsSuccessStatus: 200
 }));
 
+// 🍪 Cookie Parser - MUST come BEFORE routes/middlewares that need cookies
+app.use(cookieParser());
+
 // Middleware for parsing normal JSON
-app.use(express.json()); // This should be used for normal routes
+app.use(express.json());
 
 // Use bodyParser to handle raw JSON for Paystack webhook
 app.use('/api/subscribe/paystack/webhook', bodyParser.raw({ type: 'application/json' }));
@@ -38,10 +42,10 @@ app.use('/api/auth', authRoutes); // Auth Routes
 app.use('/api/groupowner', groupOwnerRoutes); // Group Owner Routes
 app.use('/api/groups', groupRoutes); // Group Routes
 app.use('/api/subscribe', subscriptionRoutes); // Subscription Routes
-app.use('/api/subscribe/paystack/webhook', paystackWebhookRoutes); 
+app.use('/api/subscribe/paystack/webhook', paystackWebhookRoutes); // Paystack Webhook Routes
 app.use('/api/transactions', transactionRoutes); // Transaction Routes
 
-// MongoDB Connection Test
+// MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
