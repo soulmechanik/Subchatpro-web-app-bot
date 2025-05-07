@@ -340,19 +340,19 @@ exports.login = async (req, res) => {
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
 
     // ✅ Set role and token cookies
-    res.cookie('role', user.role, {
-      httpOnly: false, // ❗ Middleware can only read non-httpOnly cookies
-      secure: false,   // set to true in production with HTTPS
-      sameSite: 'lax',
-      path: '/',
-    });
+res.cookie('role', user.role, {
+  httpOnly: false, // ❗ Middleware can only read non-httpOnly cookies
+  secure: process.env.NODE_ENV === 'production', // Use secure cookies only in production (HTTPS)
+  sameSite: 'None', // Important for cross-site cookies (if backend and frontend are on different domains)
+  path: '/',
+});
 
-    res.cookie('token', token, {
-      httpOnly: true, // For security
-      secure: false,  // set to true in production
-      sameSite: 'lax',
-      path: '/',
-    });
+res.cookie('token', token, {
+  httpOnly: true, // For security
+  secure: process.env.NODE_ENV === 'production', // Use secure cookies only in production
+  sameSite: 'None', // Important for cross-site cookies
+  path: '/',
+});
 
     console.log("✅ Login successful:");
     console.log("🔑 Token:", token);
