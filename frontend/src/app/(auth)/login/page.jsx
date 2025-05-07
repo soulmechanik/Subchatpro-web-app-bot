@@ -50,10 +50,11 @@ export default function LoginPage() {
       console.log("🎭 Role:", role)
 
       if (onboarded) {
-        router.push(`/${role.toLowerCase()}/overview`)
+        window.location.href = `/${role.toLowerCase()}/overview`;
       } else {
-        router.push('/onboarding')
+        window.location.href = '/onboarding';
       }
+      
     } catch (err) {
       const serverMessage = err.response?.data?.message || 'Login failed. Please try again.'
 
