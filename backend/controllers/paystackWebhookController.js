@@ -258,7 +258,7 @@ async function sendConfirmationEmail({
           
           ${!isRenewal ? `
           <div style="text-align: center; margin: 25px 0;">
-            <a href="${process.env.FRONTEND_URL}/groups/${group._id}" 
+            <a href="${group.telegramGroupLink}" 
                style="background-color: #3498db; color: white; padding: 12px 24px; 
                       text-decoration: none; border-radius: 4px; font-weight: bold;
                       display: inline-block;">

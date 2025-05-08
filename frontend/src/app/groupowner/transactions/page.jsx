@@ -19,30 +19,20 @@ const Transactions = () => {
       try {
         setLoading(true);
         setError(null);
-        
-        const token = localStorage.getItem('token') || getCookie('token');
-        
-        if (!token) {
-          throw new Error('Authentication required. Please login.');
-        }
-
+  
         const response = await axios.get(`${API_BASE_URL}/api/transactions`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
+          withCredentials: true, // ✅ Only send cookies automatically
         });
-        
+  
         if (!response.data?.transactions) {
           throw new Error('Invalid data format received from server');
         }
-
+  
         setTransactions(response.data.transactions);
       } catch (err) {
         console.error('Transaction fetch error:', err);
         setError(err.response?.data?.message || err.message || 'Failed to load transactions');
-        
+  
         if (err.response?.status === 401) {
           router.push('/login');
         }
@@ -50,9 +40,10 @@ const Transactions = () => {
         setLoading(false);
       }
     };
-    
+  
     fetchTransactions();
   }, [router]);
+  
 
   const getCookie = (name) => {
     if (typeof document !== 'undefined') {

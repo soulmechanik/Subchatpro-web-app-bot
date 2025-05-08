@@ -1,436 +1,277 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+// groupowner.module.scss
 
-.onboardingWrapper {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  font-family: 'Inter', sans-serif;
-  background-color: #0a0a0a;
-  color: #fff;
+// Modern Color Palette
+$primary: #17532f;       // Calm blue
+$primary-dark: #082a15;  // Darker blue
+$secondary: #64748b;     // Cool gray
+$light: #f8fafc;         // Lightest gray
+$dark: #0f172a;          // Dark navy
+$gray: #94a3b8;          // Medium gray
+$light-gray: #e2e8f0;    // Light gray
+$success: #10b981;       // Emerald green
+$error: #ef4444;         // Soft red
+$border-radius: 0.375rem;
+$box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+$transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
+// Base Container
+.container {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: $dark;
+}
+
+// Progress Bar
+.progressContainer {
+  width: 100%;
+  height: 0.25rem;
+  background-color: $light-gray;
+  border-radius: $border-radius;
+  margin-bottom: 2.5rem;
   overflow: hidden;
 }
 
-.heroBackground {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 70% 30%, #07ba4f10, transparent 50%),
-              radial-gradient(circle at 30% 70%, #00d2ff10, transparent 50%);
-  z-index: 1;
-}
-
-.gridPattern {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  z-index: 1;
-}
-
 .progressBar {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 500px;
-  margin-bottom: 3rem;
-  position: relative;
-  z-index: 2;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 15px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: rgba(255,255,255,0.1);
-    z-index: -1;
-  }
+  height: 100%;
+  background-color: $primary;
+  transition: width 0.4s ease;
 }
 
-.progressStep {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  z-index: 2;
-
-  p {
-    margin-top: 0.5rem;
-    font-size: 0.85rem;
-    color: rgba(255,255,255,0.6);
-  }
-
-  &.active {
-    p {
-      color: #fff;
-    }
-
-    .stepNumber {
-      background: linear-gradient(135deg, #07ba4f, #00d2ff);
-      color: #fff;
-      box-shadow: 0 0 0 3px rgba(7, 186, 79, 0.2);
-    }
-  }
-}
-
-.stepNumber {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.1);
-  color: rgba(255,255,255,0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.onboardingForm {
-  position: relative;
-  z-index: 2;
-  background: rgba(20, 20, 20, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
+// Form Structure
+.form {
+  background: white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
   padding: 2.5rem;
-  width: 100%;
-  max-width: 500px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(7,186,79,0.1) 0%, transparent 70%);
-    z-index: -1;
-  }
+  margin-bottom: 2rem;
+  border: 1px solid $light-gray;
 }
 
-.formStep {
+.step {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 
-.formHeader {
-  margin-bottom: 1rem;
-  text-align: center;
-
-  .stepIcon {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #07ba4f;
-  }
-}
-
-.title {
-  font-size: 1.75rem;
-  font-weight: 700;
+// Header Styles
+.stepHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   margin-bottom: 0.5rem;
-  background: linear-gradient(90deg, #07ba4f, #00d2ff);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
-.subtitle {
-  font-size: 1rem;
-  color: #bbb;
+.stepIndicator {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: $primary;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
 }
 
-.inputGroup {
-  margin-bottom: 1rem;
+.stepTitle {
+  color: $dark;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.025em;
 }
 
-.inputLabel {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
+.stepSubtitle {
+  color: $secondary;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+// Form Elements
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formLabel {
   font-weight: 500;
-  color: #ddd;
+  color: $dark;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.inputField {
+.formInput,
+.formSelect {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid $light-gray;
+  border-radius: $border-radius;
+  font-size: 0.9375rem;
+  transition: $transition;
   width: 100%;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
-  font-family: 'Inter', sans-serif;
-  transition: all 0.3s ease;
-  
+  background-color: $light;
+  color: $dark;
+
   &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.1);
     outline: none;
-    border-color: #07ba4f;
-    box-shadow: 0 0 0 2px rgba(7, 186, 79, 0.2);
-  }
-  
-  &::placeholder {
-    color: #666;
+    background-color: white;
   }
 
-  /* Autofill fixes - properly scoped */
-  &:-webkit-autofill,
-  &:-webkit-autofill:hover, 
-  &:-webkit-autofill:focus,
-  &:-webkit-autofill:active {
-    -webkit-text-fill-color: #fff !important;
-    -webkit-box-shadow: 0 0 0px 1000px rgba(20, 20, 20, 0.8) inset !important;
-    transition: background-color 5000s ease-in-out 0s;
-    caret-color: #fff;
-  }
-
-  /* Internal autofill - scoped to inputField class */
-  &[data-autofilled] {
-    background-color: rgba(20, 20, 20, 0.8) !important;
-    color: #fff !important;
+  &.error {
+    border-color: $error;
   }
 }
 
-/* Special styling for select elements */
-.selectField {
+.formSelect {
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1em;
-
-  /* Autofill fixes for select */
-  &:-webkit-autofill,
-  &:-webkit-autofill:hover, 
-  &:-webkit-autofill:focus {
-    -webkit-text-fill-color: #fff !important;
-    -webkit-box-shadow: 0 0 0px 1000px rgba(20, 20, 20, 0.8) inset !important;
-  }
+  background-position: right 0.875rem center;
+  background-size: 1rem;
 }
 
-.textarea {
-  resize: vertical;
-  min-height: 100px;
+// Error Handling
+.errorMessage {
+  color: $error;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.formActions {
+.errorAlert {
+  margin-top: 1.5rem;
+  padding: 0.875rem;
+  background-color: rgba($error, 0.05);
+  border-left: 3px solid $error;
+  color: $error;
+  border-radius: 0 $border-radius $border-radius 0;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+// Button Styles
+.buttonGroup {
   display: flex;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
-.backButton {
-  flex: 1;
-  padding: 1rem;
-  border-radius: 8px;
-  background: rgba(255,255,255,0.05);
-  color: #fff;
-  font-weight: 600;
-  border: 1px solid rgba(255,255,255,0.2);
+.prevButton,
+.nextButton,
+.submitButton {
+  padding: 0.6875rem 1.25rem;
+  border-radius: $border-radius;
+  font-weight: 500;
+  font-size: 0.9375rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: rgba(255,255,255,0.1);
-  }
-}
-
-.nextButton, .submitButton {
-  flex: 1;
-  padding: 1rem;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #07ba4f, #0a8a3a);
-  color: white;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
+  transition: $transition;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(7, 186, 79, 0.3);
-  
+  flex: 1;
+
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(7, 186, 79, 0.5);
+    transform: translateY(-1px);
   }
-  
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 2px;
+  }
+}
+
+.prevButton {
+  background: white;
+  color: $primary;
+  border: 1px solid $light-gray;
+
+  &:hover {
+    background: $light;
+    border-color: $gray;
+  }
+}
+
+.nextButton,
+.submitButton {
+  background-color: $primary;
+  color: white;
+  border: none;
+
+  &:hover {
+    background-color: $primary-dark;
+  }
+
   &:disabled {
-    opacity: 0.7;
+    background-color: $gray;
     cursor: not-allowed;
+    opacity: 0.7;
   }
 }
 
-/* Firefox specific fixes - properly scoped */
-@-moz-document url-prefix() {
-  .inputField {
-    filter: none;
+// Section Styles
+.sectionHeader {
+  margin: 1.5rem 0 0.5rem;
+}
+
+.sectionTitle {
+  color: $dark;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+// Responsive Design
+@media (max-width: 640px) {
+  .container {
+    padding: 1.5rem 1rem;
   }
 
-  .inputField[data-autofilled] {
-    background-color: rgba(20, 20, 20, 0.8) !important;
+  .form {
+    padding: 1.75rem;
+  }
+
+  .buttonGroup {
+    flex-direction: column;
+  }
+
+  .stepTitle {
+    font-size: 1.125rem;
   }
 }
 
-@media (max-width: 768px) {
-  .onboardingWrapper {
-    padding: 1.5rem;
-  }
-
-  .onboardingForm {
-    padding: 1.5rem;
-  }
-
-  .progressBar {
-    margin-bottom: 2rem;
-  }
-}
-
-.checkboxContainer {
-    margin-top: 0.5rem;
-  }
-  
-  .checkboxGroup {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 10px;
-    margin-top: 8px;
-  }
-  
-  .checkboxLabel {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 15px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    
-    &:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(7, 186, 79, 0.3);
-    }
-    
-    &.checked {
-      background: rgba(7, 186, 79, 0.1);
-      border-color: rgba(7, 186, 79, 0.5);
-      
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 3px;
-        height: 100%;
-        background: linear-gradient(to bottom, #07ba4f, #00d2ff);
-      }
-    }
-  }
-  
-  .checkboxInput {
-    position: absolute;
+// Animation
+@keyframes fadeIn {
+  from {
     opacity: 0;
-    height: 0;
-    width: 0;
-    
-    &:focus-visible + .checkboxText {
-      outline: 2px solid #07ba4f;
-      outline-offset: 2px;
-    }
+    transform: translateY(10px);
   }
-  
-  .checkboxText {
-    position: relative;
-    padding-left: 28px;
-    font-size: 0.9rem;
-    color: #ddd;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.03);
-      transition: all 0.2s ease;
-    }
-    
-    &::after {
-      content: '';
-      position: absolute;
-      left: 5px;
-      top: 50%;
-      transform: translateY(-50%) scale(0);
-      width: 8px;
-      height: 13px;
-      border: solid #07ba4f;
-      border-width: 0 2px 2px 0;
-      transform-origin: bottom left;
-      transition: transform 0.3s ease;
-    }
-    
-    .checked & {
-      color: #fff;
-      
-      &::before {
-        border-color: #07ba4f;
-        background: rgba(7, 186, 79, 0.1);
-      }
-      
-      &::after {
-        transform: translateY(-50%) rotate(45deg) scale(1);
-        border-color: #00d2ff;
-      }
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  @media (max-width: 480px) {
-    .checkboxGroup {
-      grid-template-columns: 1fr 1fr;
-    }
-    
-    .checkboxLabel {
-      padding: 10px 12px;
-    }
-  }
+}
 
+.step {
+  animation: fadeIn 0.3s ease-out forwards;
+}
 
-  .feeNote {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 8px;
-    font-size: 0.8rem;
-    color: #666;
-    background: #f8f8f8;
-    padding: 8px 12px;
-    border-radius: 4px;
-    border-left: 3px solid #4f46e5; // Or your primary color
-  
-    .infoIcon {
-      color: #4f46e5; // Matching the border
-      flex-shrink: 0;
-    }
-  }
+// Utility Classes (pure selectors only)
+.hidden {
+  display: none;
+}

@@ -84,34 +84,14 @@ export default function ModernLayout({ children }) {
           />
         </nav>
 
-        <div className={styles.workspacesSection}>
-          <div className={styles.sectionLabel}>
-            {!sidebarCollapsed && 'Workspaces'}
-          </div>
-          <WorkspaceItem 
-            name="Product"
-            icon={<FiHash />}
-            color="#6366f1"
-            collapsed={sidebarCollapsed}
-          />
-          <WorkspaceItem 
-            name="Marketing"
-            icon={<FiHash />}
-            color="#10b981"
-            collapsed={sidebarCollapsed}
-          />
-          <button className={styles.addButton}>
-            <FiPlus />
-            {!sidebarCollapsed && 'Add workspace'}
-          </button>
-        </div>
+       
 
         <div className={styles.userProfile}>
           <div className={styles.avatar}>JD</div>
           {!sidebarCollapsed && (
             <div className={styles.userInfo}>
-              <span className={styles.userName}>John Doe</span>
-              <span className={styles.userRole}>Admin</span>
+              <span className={styles.userName}>Owner</span>
+              <span className={styles.userRole}>G-O</span>
             </div>
           )}
           {!sidebarCollapsed && (
@@ -134,19 +114,6 @@ export default function ModernLayout({ children }) {
             <div className={styles.searchShortcut}>⌘K</div>
           </div>
 
-          <div className={styles.headerActions}>
-            <button className={styles.actionButton}>
-              <FiHelpCircle size={18} />
-            </button>
-            <button className={styles.actionButton}>
-              <FiBell size={18} />
-              <span className={styles.notificationBadge}>3</span>
-            </button>
-            <div className={styles.userDropdown}>
-              <div className={styles.userAvatar}>JD</div>
-              {!sidebarCollapsed && <FiChevronDown size={16} />}
-            </div>
-          </div>
         </header>
 
         <main className={styles.mainContent}>

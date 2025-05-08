@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authControllers');
+const { protect } = require('../middleware/authMiddleware');  // Import protect middleware
 
 // Log incoming requests to check if they hit the backend
 router.post('/register', (req, res, next) => {
@@ -18,11 +19,10 @@ router.post('/forgot-password', (req, res, next) => {
   next();
 }, authController.requestPasswordReset);
 
-// Log incoming requests for password reset
 router.post('/reset-password/:token', (req, res, next) => {
   console.log('Reset Password route hit');
   next();
-}, authController.resetPassword );
+}, authController.resetPassword);
 
 // Log incoming requests for email verification
 router.get('/verify-email', (req, res, next) => {
@@ -31,5 +31,8 @@ router.get('/verify-email', (req, res, next) => {
 }, authController.verifyEmail);
 
 router.post('/resend-verification', authController.resendVerificationEmail);
+
+// New '/me' route to get current user's details
+router.get('/me', protect, authController.getMe);  // Use protect middleware to secure the route
 
 module.exports = router;

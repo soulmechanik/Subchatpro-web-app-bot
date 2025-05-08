@@ -1,3 +1,4 @@
+
 // server.js
 
 const express = require('express');
@@ -15,11 +16,8 @@ const app = express();
 
 // --- 🛡️ CORS Configuration ---
 app.use(cors({
-  origin: ['https://www.subchatpro.com', 'http://localhost:3000'], // frontend URLs
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-paystack-signature'],
-  credentials: true, // 🔥 THIS IS CRITICAL for cookie handling!
-  optionsSuccessStatus: 200
+  origin: ['https://www.subchatpro.com', 'http://localhost:3000'], // Frontend URLs
+  credentials: true, // 🔥 allow cookies!
 }));
 
 // --- 🍪 Cookie Parser (MUST be early) ---
@@ -57,4 +55,3 @@ mongoose.connect(process.env.MONGO_URI)
     });
   })
   .catch((err) => console.error('❌ MongoDB connection error:', err));
-

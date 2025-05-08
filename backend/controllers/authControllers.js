@@ -320,63 +320,97 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    console.log("🔹 Login Attempt - Email:", email);
+
+    // Find the user by email
     const user = await User.findOne({ email }).select('+password');
+
     if (!user) {
-      console.log("❌ Login failed: user not found");
+      console.log("❌ Login failed: user not found for email:", email);
       return res.status(400).json({ message: 'Invalid credentials' });
     }
+
+    console.log("🔍 User found:", user.email);
 
     if (!user.isVerified) {
       console.log("⚠️ Email not verified for user:", email);
       return res.status(403).json({ message: 'Please verify your email before logging in.' });
     }
 
+    console.log("✅ User email is verified.");
+
     const isMatch = await user.matchPassword(password);
+
     if (!isMatch) {
       console.log("❌ Login failed: incorrect password for", email);
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
+    console.log("✅ Password matched for user:", email);
 
-    res.cookie('role', user.role, {
-      httpOnly: false, // needs to be readable by frontend middleware
-      secure: true, // must be true because you are HTTPS
-      sameSite: 'None', // because cross-site between frontend and backend
-      domain: '.subchatpro.com', // critical — allow subdomains
-      path: '/',
-    });
-    
-    res.cookie('token', token, {
-      httpOnly: true, 
-      secure: true,
-      sameSite: 'None', 
-      domain: '.subchatpro.com', 
-      path: '/',
-    });
+    // Generate JWT token
+    console.log("🛠️ Generating JWT Token...");
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    console.log("✅ JWT Token generated");
 
-    console.log("✅ Login successful:");
-    console.log("🔑 Token:", token);
     console.log("🆔 UserID:", user._id.toString());
     console.log("🎭 Role:", user.role);
     console.log("📦 Onboarded:", user.onboarded);
 
+    // Set token in an HttpOnly cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', 
+      sameSite: 'Strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    // Set role in a readable cookie (optional if needed by frontend)
+    res.cookie('role', user.role, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    console.log("🔑 Sending response with user and token...");
+
+    // ✅ FIX: Include token in the response!
     res.status(200).json({
       message: 'Login successful',
-      token,
-      userId: user._id,
-      role: user.role,
-      onboarded: user.onboarded,
+      token, // <-- added
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+        onboarded: user.onboarded,
+        isVerified: user.isVerified,
+      },
     });
 
   } catch (err) {
-    console.error("💥 Server error during login:", err.message);
+    console.error("💥 Server error during login:", err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
 
 
+exports.getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select("-password");  // Exclude password from response
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user);  // Send the user data back
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user data" });
+  }
+};
 
 
 exports.requestPasswordReset = async (req, res) => {

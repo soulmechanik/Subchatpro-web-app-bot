@@ -30,43 +30,62 @@ export default function LoginPage() {
     setError('')
 
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5002"; // fallback to localhost
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5002";
+
+      console.log("📨 Sending login request...");
 
       const response = await axios.post(
-        `${backendUrl}/api/auth/login`, // Use the dynamic backend URL
+        `${backendUrl}/api/auth/login`,
         { email, password },
-        { withCredentials: true } // ✅ Store cookies from backend
-      )
+        { withCredentials: true }
+      );
 
-      const { token, role, userId, onboarded } = response.data
+      const { user } = response.data;
 
-      // Optional: store if you use it for client-side auth headers
-      localStorage.setItem('token', token)
-      localStorage.setItem('role', role)
-      localStorage.setItem('userId', userId)
+      console.log("✅ Login successful!");
+      console.log("🆔 UserID:", user.id);
+      console.log("🎭 Role:", user.role);
+      console.log("📦 Onboarded:", user.onboarded);
 
-      console.log("✅ Token:", token)
-      console.log("🆔 UserID:", userId)
-      console.log("🎭 Role:", role)
+      // Save user details if needed
+      localStorage.setItem('userId', user.id);
+      localStorage.setItem('role', user.role);
 
-      if (onboarded) {
-        window.location.href = `/${role.toLowerCase()}/overview`;
+      // Redirect properly
+      if (!user.onboarded) {
+        console.log("🚀 User not onboarded, redirecting to onboarding...");
+        if (user.role === 'GroupOwner') {
+          router.replace('/onboarding/groupowner');
+        } else if (user.role === 'GroupSubscriber') {
+          router.replace('/onboarding/subscriber');
+        } else {
+          router.replace('/login'); // fallback
+        }
       } else {
-        window.location.href = '/onboarding';
+        console.log("🚀 User onboarded, redirecting to overview...");
+        if (user.role === 'GroupOwner') {
+          router.replace('/groupowner/overview');
+        } else if (user.role === 'GroupSubscriber') {
+          router.replace('/groupsubscriber/overview');
+        } else {
+          router.replace('/login'); // fallback
+        }
       }
-      
+
     } catch (err) {
-      const serverMessage = err.response?.data?.message || 'Login failed. Please try again.'
+      console.error("💥 Login error:", err);
+
+      const serverMessage = err.response?.data?.message || 'Login failed. Please try again.';
 
       if (serverMessage.includes('verify your email')) {
-        setError('Please verify your email before logging in.')
+        setError('Please verify your email before logging in.');
       } else if (serverMessage.includes('Invalid credentials')) {
-        setError('Invalid email or password.')
+        setError('Invalid email or password.');
       } else {
-        setError(serverMessage)
+        setError(serverMessage);
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 

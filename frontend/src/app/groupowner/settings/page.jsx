@@ -23,15 +23,16 @@ const SettingsPage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/settings`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        setLoading(true);
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/settings`,
+          { withCredentials: true }
+        );
         setProfile(res.data);
         setFormData(res.data);
-        setLoading(false);
       } catch (err) {
         console.error('Error fetching profile:', err);
+      } finally {
         setLoading(false);
       }
     };
@@ -61,10 +62,11 @@ const SettingsPage = () => {
 
   const handleUpdate = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/settings`, formData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/settings`,
+        formData,
+        { withCredentials: true }
+      );
       setProfile(res.data.updatedProfile);
       setEditing(false);
     } catch (err) {
@@ -75,86 +77,84 @@ const SettingsPage = () => {
   if (loading) return <div className={styles.loading}>Loading...</div>;
 
   return (
-    <>
-      <Layout>
-        <div className={styles.settingsContainer}>
-          <h1 className={styles.title}>Profile Settings</h1>
+    <Layout>
+      <div className={styles.settingsContainer}>
+        <h1 className={styles.title}>Profile Settings</h1>
 
-          <div className={styles.card}>
-            <div className={styles.formGroup}>
-              <label>Name</label>
-              <input
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                disabled={!editing}
-              />
-            </div>
+        <div className={styles.card}>
+          <div className={styles.formGroup}>
+            <label>Name</label>
+            <input
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              disabled={!editing}
+            />
+          </div>
 
-            <div className={styles.formGroup}>
-              <label>Phone Number</label>
-              <input
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                disabled={!editing}
-              />
-            </div>
+          <div className={styles.formGroup}>
+            <label>Phone Number</label>
+            <input
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              disabled={!editing}
+            />
+          </div>
 
-            <div className={styles.formGroup}>
-              <label>Telegram Username</label>
-              <input
-                name="telegramUsername"
-                value={formData.telegramUsername}
-                onChange={handleChange}
-                disabled={!editing}
-              />
-            </div>
+          <div className={styles.formGroup}>
+            <label>Telegram Username</label>
+            <input
+              name="telegramUsername"
+              value={formData.telegramUsername}
+              onChange={handleChange}
+              disabled={!editing}
+            />
+          </div>
 
-            <div className={styles.formGroup}>
-              <label>Bank Account Name</label>
-              <input
-                name="bankDetails.accountHolderName"
-                value={formData.bankDetails.accountHolderName}
-                onChange={handleChange}
-                disabled={!editing}
-              />
-            </div>
+          <div className={styles.formGroup}>
+            <label>Bank Account Name</label>
+            <input
+              name="bankDetails.accountHolderName"
+              value={formData.bankDetails.accountHolderName}
+              onChange={handleChange}
+              disabled={!editing}
+            />
+          </div>
 
-            <div className={styles.formGroup}>
-              <label>Bank Account Number</label>
-              <input
-                name="bankDetails.accountNumber"
-                value={formData.bankDetails.accountNumber}
-                onChange={handleChange}
-                disabled={!editing}
-              />
-            </div>
+          <div className={styles.formGroup}>
+            <label>Bank Account Number</label>
+            <input
+              name="bankDetails.accountNumber"
+              value={formData.bankDetails.accountNumber}
+              onChange={handleChange}
+              disabled={!editing}
+            />
+          </div>
 
-            <div className={styles.formGroup}>
-              <label>Bank Name</label>
-              <input
-                name="bankDetails.bankName"
-                value={formData.bankDetails.bankName}
-                onChange={handleChange}
-                disabled={!editing}
-              />
-            </div>
+          <div className={styles.formGroup}>
+            <label>Bank Name</label>
+            <input
+              name="bankDetails.bankName"
+              value={formData.bankDetails.bankName}
+              onChange={handleChange}
+              disabled={!editing}
+            />
+          </div>
 
-            <div className={styles.actions}>
-              {editing ? (
-                <>
-                  <button onClick={handleUpdate} className={styles.saveBtn}>Save</button>
-                  <button onClick={() => setEditing(false)} className={styles.cancelBtn}>Cancel</button>
-                </>
-              ) : (
-                <button onClick={() => setEditing(true)} className={styles.editBtn}>Edit Profile</button>
-              )}
-            </div>
+          <div className={styles.actions}>
+            {editing ? (
+              <>
+                <button onClick={handleUpdate} className={styles.saveBtn}>Save</button>
+                <button onClick={() => setEditing(false)} className={styles.cancelBtn}>Cancel</button>
+              </>
+            ) : (
+              <button onClick={() => setEditing(true)} className={styles.editBtn}>Edit Profile</button>
+            )}
           </div>
         </div>
-      </Layout>
-    </>
+      </div>
+    </Layout>
   );
 };
 

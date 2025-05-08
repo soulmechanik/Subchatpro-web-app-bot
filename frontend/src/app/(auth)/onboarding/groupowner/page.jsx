@@ -1,14 +1,17 @@
-'use client';
+'use client'
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FiArrowRight, FiCheck, FiUser, FiCreditCard, FiUsers, FiInfo } from 'react-icons/fi';
+import axios from 'axios';
 import styles from './groupowner.module.scss';
+import Header from '@/components/Header/Header';
+import Footer from '@/components/Footer/Footer';
 
 export default function GroupOwnerRegistration() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState(null);
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({});
 
@@ -49,18 +52,30 @@ export default function GroupOwnerRegistration() {
   ];
 
   useEffect(() => {
-    // Get token from localStorage or cookies
-    const storedToken = localStorage.getItem('token') || document.cookie
-      .split('; ')
-      .find(row => row.startsWith('token='))
-      ?.split('=')[1];
-    
-    if (!storedToken) {
-      router.push('/login');
-      return;
-    }
-    setToken(storedToken);
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/me`,
+          { withCredentials: true }
+        );
+        const user = response.data;
+        console.log('✅ User fetched:', user);
+  
+        setFormData(prev => ({
+          ...prev,
+          name: user.name || '',
+          phoneNumber: user.phoneNumber || '',
+          telegramUsername: user.telegramUsername || '',
+        }));
+      } catch (error) {
+        console.error('⚠️ Error fetching user data:', error);
+        router.push('/login');
+      }
+    };
+  
+    fetchUser();
   }, [router]);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,7 +93,6 @@ export default function GroupOwnerRegistration() {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
 
-    // Clear error when user types
     if (formErrors[name]) {
       setFormErrors(prev => ({
         ...prev,
@@ -127,49 +141,36 @@ export default function GroupOwnerRegistration() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    
-    if (!token) {
-      setError('Authentication token missing. Please login again.');
-      setLoading(false);
-      return;
-    }
-
+  
     if (!validateStep(3)) {
       setLoading(false);
       return;
     }
-
+  
     try {
-      // First onboard the user
-      const userRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/onboard`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
+      const userRes = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/onboard`,
+        {
           name: formData.name,
           phoneNumber: formData.phoneNumber,
           telegramUsername: formData.telegramUsername,
           accountHolderName: formData.bankDetails.accountHolderName,
           accountNumber: formData.bankDetails.accountNumber,
-          bankName: formData.bankDetails.bankName
-        }),
-      });
-
-      if (!userRes.ok) {
-        const errorData = await userRes.json();
-        throw new Error(errorData.message || 'User onboarding failed');
-      }
-
-      // Then create the group
-      const groupRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/creategroup`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          bankName: formData.bankDetails.bankName,
         },
-        body: JSON.stringify({
+        { withCredentials: true }
+      );
+  
+      console.log('✅ Onboard successful:', userRes.data);
+  
+      // 🔥 Check if profile exists, not status
+      if (!userRes.data || !userRes.data.profile) {
+        throw new Error('User onboarding failed');
+      }
+  
+      const groupRes = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/creategroup`,
+        {
           groupName: formData.groupName,
           telegramGroupLink: formData.telegramGroupLink,
           telegramGroupId: formData.telegramGroupId,
@@ -177,316 +178,313 @@ export default function GroupOwnerRegistration() {
           category: formData.category,
           subscriptionFrequency: formData.subscriptionFrequency,
           subscriptionPrice: formData.subscriptionPrice,
-          currency: formData.currency
-        }),
-      });
-      
-
-      if (!groupRes.ok) {
-        const errorData = await groupRes.json();
-        throw new Error(errorData.message || 'Group creation failed');
+          currency: formData.currency,
+        },
+        { withCredentials: true }
+      );
+  
+      console.log('✅ Group created successfully:', groupRes.data);
+  
+      if (!groupRes.data || !groupRes.data.group) {
+        throw new Error('Group creation failed');
       }
-
+  
+      // 🚀 Finally redirect
       router.push('/groupowner/overview');
+  
     } catch (err) {
+      console.error('❌ Registration Error:', err);
       setError(err.message);
-      console.error('Registration Error:', err);
     } finally {
       setLoading(false);
     }
   };
-
-  if (!token) {
-    return (
-      <div className={styles.onboardingWrapper}>
-        <div className={styles.loadingContainer}>
-          <p>Loading authentication...</p>
-        </div>
-      </div>
-    );
-  }
-
+  
+  
+  
+  
   return (
-    <div className={styles.onboardingWrapper}>
-      <div className={styles.heroBackground} />
-      <div className={styles.gridPattern} />
 
-      <div className={styles.progressBar}>
-        {[1, 2, 3].map((s, i) => (
-          <div key={s} className={`${styles.progressStep} ${step >= s ? styles.active : ''}`}>
-            <div className={styles.stepNumber}>{s}</div>
-            <p>{['Personal Info', 'Group Info', 'Subscription & Bank'][i]}</p>
-          </div>
-        ))}
+    <>
+    <Header/>
+    <div className={styles.container}>
+      <div className={styles.progressContainer}>
+        <div className={styles.progressBar} style={{ width: `${(step / 3) * 100}%` }} />
       </div>
-
-      {error && (
-        <div className={styles.errorAlert}>
-          <p>{error}</p>
-          <button onClick={() => setError(null)} className={styles.closeError}>
-            &times;
-          </button>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className={styles.onboardingForm}>
-        {/* STEP 1: Personal Info */}
+      
+      <form className={styles.form} onSubmit={handleSubmit}>
         {step === 1 && (
-          <div className={styles.formStep}>
-            <div className={styles.formHeader}>
-              <FiUser className={styles.stepIcon} />
-              <h2 className={styles.title}>Personal Information</h2>
-              <p className={styles.subtitle}>Tell us who you are</p>
+          <div className={styles.step}>
+            <div className={styles.stepHeader}>
+              <div className={styles.stepIndicator}>1</div>
+              <h2 className={styles.stepTitle}>Personal Information</h2>
             </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Name</label>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Full Name</label>
               <input
+                className={`${styles.formInput} ${formErrors.name ? styles.error : ''}`}
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className={`${styles.inputField} ${formErrors.name ? styles.errorInput : ''}`}
                 required
               />
-              {formErrors.name && <span className={styles.errorText}>{formErrors.name}</span>}
+              {formErrors.name && <span className={styles.errorMessage}>{formErrors.name}</span>}
             </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Phone Number</label>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Phone Number</label>
               <input
-                type="tel"
+                className={`${styles.formInput} ${formErrors.phoneNumber ? styles.error : ''}`}
+                type="text"
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                className={`${styles.inputField} ${formErrors.phoneNumber ? styles.errorInput : ''}`}
                 required
               />
-              {formErrors.phoneNumber && <span className={styles.errorText}>{formErrors.phoneNumber}</span>}
+              {formErrors.phoneNumber && <span className={styles.errorMessage}>{formErrors.phoneNumber}</span>}
             </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Telegram Username (optional)</label>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Telegram Username</label>
               <input
+                className={styles.formInput}
                 type="text"
                 name="telegramUsername"
-                placeholder="@yourusername"
                 value={formData.telegramUsername}
                 onChange={handleChange}
-                className={styles.inputField}
               />
             </div>
-
-            <button type="button" onClick={nextStep} className={styles.nextButton}>
-              Continue <FiArrowRight />
-            </button>
+            
+            <div className={styles.buttonGroup}>
+              <button
+                type="button"
+                className={styles.nextButton}
+                onClick={nextStep}
+              >
+                Next <FiArrowRight />
+              </button>
+            </div>
           </div>
         )}
 
-        {/* STEP 2: Group Info */}
         {step === 2 && (
-          <div className={styles.formStep}>
-            <div className={styles.formHeader}>
-              <FiUsers className={styles.stepIcon} />
-              <h2 className={styles.title}>Telegram Group Information</h2>
-              <p className={styles.subtitle}>Details about your group</p>
+          <div className={styles.step}>
+            <div className={styles.stepHeader}>
+              <div className={styles.stepIndicator}>2</div>
+              <h2 className={styles.stepTitle}>Group Information</h2>
             </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Group Name</label>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Group Name</label>
               <input
+                className={`${styles.formInput} ${formErrors.groupName ? styles.error : ''}`}
                 type="text"
                 name="groupName"
                 value={formData.groupName}
                 onChange={handleChange}
-                className={`${styles.inputField} ${formErrors.groupName ? styles.errorInput : ''}`}
                 required
               />
-              {formErrors.groupName && <span className={styles.errorText}>{formErrors.groupName}</span>}
+              {formErrors.groupName && <span className={styles.errorMessage}>{formErrors.groupName}</span>}
             </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Telegram Group Link</label>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Telegram Group Link</label>
               <input
-                type="url"
+                className={`${styles.formInput} ${formErrors.telegramGroupLink ? styles.error : ''}`}
+                type="text"
                 name="telegramGroupLink"
-                placeholder="https://t.me/yourgroup"
                 value={formData.telegramGroupLink}
                 onChange={handleChange}
-                className={`${styles.inputField} ${formErrors.telegramGroupLink ? styles.errorInput : ''}`}
                 required
               />
-              {formErrors.telegramGroupLink && <span className={styles.errorText}>{formErrors.telegramGroupLink}</span>}
+              {formErrors.telegramGroupLink && <span className={styles.errorMessage}>{formErrors.telegramGroupLink}</span>}
             </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Telegram Group ID</label>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Telegram Group ID</label>
               <input
+                className={`${styles.formInput} ${formErrors.telegramGroupId ? styles.error : ''}`}
                 type="text"
                 name="telegramGroupId"
-                placeholder="e.g., -1001234567890"
                 value={formData.telegramGroupId}
                 onChange={handleChange}
-                className={`${styles.inputField} ${formErrors.telegramGroupId ? styles.errorInput : ''}`}
                 required
               />
-              {formErrors.telegramGroupId && <span className={styles.errorText}>{formErrors.telegramGroupId}</span>}
+              {formErrors.telegramGroupId && <span className={styles.errorMessage}>{formErrors.telegramGroupId}</span>}
             </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Group Description (optional)</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                className={styles.inputField}
-                rows={3}
-              />
-            </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Group Category</label>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Category</label>
               <select
+                className={`${styles.formSelect} ${formErrors.category ? styles.error : ''}`}
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className={`${styles.inputField} ${styles.selectField} ${formErrors.category ? styles.errorInput : ''}`}
                 required
               >
                 <option value="">Select a category</option>
-                {categories.map(cat => (
+                {categories.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat.charAt(0).toUpperCase() + cat.slice(1)}
                   </option>
                 ))}
               </select>
-              {formErrors.category && <span className={styles.errorText}>{formErrors.category}</span>}
+              {formErrors.category && <span className={styles.errorMessage}>{formErrors.category}</span>}
             </div>
-
-            <div className={styles.formActions}>
-              <button type="button" onClick={prevStep} className={styles.backButton}>
-                Back
+            
+            <div className={styles.buttonGroup}>
+              <button
+                type="button"
+                className={styles.prevButton}
+                onClick={prevStep}
+              >
+                Previous
               </button>
-              <button type="button" onClick={nextStep} className={styles.nextButton}>
-                Continue <FiArrowRight />
+              <button
+                type="button"
+                className={styles.nextButton}
+                onClick={nextStep}
+              >
+                Next <FiArrowRight />
               </button>
             </div>
           </div>
         )}
 
-        {/* STEP 3: Subscription + Bank */}
         {step === 3 && (
-          <div className={styles.formStep}>
-            <div className={styles.formHeader}>
-              <FiCreditCard className={styles.stepIcon} />
-              <h2 className={styles.title}>Subscription & Bank Details</h2>
-              <p className={styles.subtitle}>Set your subscription and where to get paid</p>
+          <div className={styles.step}>
+            <div className={styles.stepHeader}>
+              <div className={styles.stepIndicator}>3</div>
+              <h2 className={styles.stepTitle}>Payment Information</h2>
             </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Subscription Frequency</label>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Subscription Frequency</label>
               <select
+                className={`${styles.formSelect} ${formErrors.subscriptionFrequency ? styles.error : ''}`}
                 name="subscriptionFrequency"
                 value={formData.subscriptionFrequency}
                 onChange={handleChange}
-                className={`${styles.inputField} ${styles.selectField} ${formErrors.subscriptionFrequency ? styles.errorInput : ''}`}
                 required
               >
                 <option value="">Select frequency</option>
-                {frequencies.map(f => (
-                  <option key={f} value={f}>
-                    {f.charAt(0).toUpperCase() + f.slice(1)}
+                {frequencies.map((freq) => (
+                  <option key={freq} value={freq}>
+                    {freq.charAt(0).toUpperCase() + freq.slice(1)}
                   </option>
                 ))}
               </select>
-              {formErrors.subscriptionFrequency && <span className={styles.errorText}>{formErrors.subscriptionFrequency}</span>}
+              {formErrors.subscriptionFrequency && <span className={styles.errorMessage}>{formErrors.subscriptionFrequency}</span>}
             </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Currency</label>
-              <select
-                name="currency"
-                value={formData.currency}
-                onChange={handleChange}
-                className={`${styles.inputField} ${styles.selectField}`}
-                required
-              >
-                {currencies.map(curr => (
-                  <option key={curr.code} value={curr.code}>
-                    {curr.name} ({curr.code})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Subscription Price</label>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Subscription Price</label>
               <input
+                className={`${styles.formInput} ${formErrors.subscriptionPrice ? styles.error : ''}`}
                 type="number"
                 name="subscriptionPrice"
                 value={formData.subscriptionPrice}
                 onChange={handleChange}
-                className={`${styles.inputField} ${formErrors.subscriptionPrice ? styles.errorInput : ''}`}
-                placeholder="Enter amount"
                 required
               />
-              {formErrors.subscriptionPrice && <span className={styles.errorText}>{formErrors.subscriptionPrice}</span>}
-              <div className={styles.feeNote}>
-                <FiInfo className={styles.infoIcon} />
-                <span>We charge a 5% service fee from your subscription price</span>
-              </div>
+              {formErrors.subscriptionPrice && <span className={styles.errorMessage}>{formErrors.subscriptionPrice}</span>}
             </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Bank Name</label>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Currency</label>
+              <select
+                className={styles.formSelect}
+                name="currency"
+                value={formData.currency}
+                onChange={handleChange}
+                required
+              >
+                {currencies.map((currency) => (
+                  <option key={currency.code} value={currency.code}>
+                    {currency.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className={styles.sectionHeader}>
+              <h3 className={styles.sectionTitle}>Bank Details</h3>
+            </div>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Bank Name</label>
               <input
+                className={`${styles.formInput} ${formErrors['bankDetails.bankName'] ? styles.error : ''}`}
                 type="text"
                 name="bankDetails.bankName"
                 value={formData.bankDetails.bankName}
                 onChange={handleChange}
-                className={`${styles.inputField} ${formErrors['bankDetails.bankName'] ? styles.errorInput : ''}`}
                 required
               />
-              {formErrors['bankDetails.bankName'] && <span className={styles.errorText}>{formErrors['bankDetails.bankName']}</span>}
+              {formErrors['bankDetails.bankName'] && <span className={styles.errorMessage}>{formErrors['bankDetails.bankName']}</span>}
             </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Account Number</label>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Account Number</label>
               <input
+                className={`${styles.formInput} ${formErrors['bankDetails.accountNumber'] ? styles.error : ''}`}
                 type="text"
                 name="bankDetails.accountNumber"
                 value={formData.bankDetails.accountNumber}
                 onChange={handleChange}
-                className={`${styles.inputField} ${formErrors['bankDetails.accountNumber'] ? styles.errorInput : ''}`}
                 required
               />
-              {formErrors['bankDetails.accountNumber'] && <span className={styles.errorText}>{formErrors['bankDetails.accountNumber']}</span>}
+              {formErrors['bankDetails.accountNumber'] && <span className={styles.errorMessage}>{formErrors['bankDetails.accountNumber']}</span>}
             </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Account Holder's Name</label>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Account Holder Name</label>
               <input
+                className={`${styles.formInput} ${formErrors['bankDetails.accountHolderName'] ? styles.error : ''}`}
                 type="text"
                 name="bankDetails.accountHolderName"
                 value={formData.bankDetails.accountHolderName}
                 onChange={handleChange}
-                className={`${styles.inputField} ${formErrors['bankDetails.accountHolderName'] ? styles.errorInput : ''}`}
                 required
               />
-              {formErrors['bankDetails.accountHolderName'] && <span className={styles.errorText}>{formErrors['bankDetails.accountHolderName']}</span>}
+              {formErrors['bankDetails.accountHolderName'] && <span className={styles.errorMessage}>{formErrors['bankDetails.accountHolderName']}</span>}
             </div>
-
-            <div className={styles.formActions}>
-              <button type="button" onClick={prevStep} className={styles.backButton}>
-                Back
+            
+            <div className={styles.buttonGroup}>
+              <button
+                type="button"
+                className={styles.prevButton}
+                onClick={prevStep}
+              >
+                Previous
               </button>
-              <button type="submit" disabled={loading} className={styles.submitButton}>
-                {loading ? 'Submitting...' : 'Complete Registration'} <FiCheck />
+              <button
+                type="submit"
+                className={styles.submitButton}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <span>Submitting</span>
+                    <FiCheck />
+                  </>
+                ) : (
+                  <>
+                    <span>Complete Registration</span>
+                    <FiArrowRight />
+                  </>
+                )}
               </button>
             </div>
+            
+            {error && <div className={styles.errorAlert}>{error}</div>}
           </div>
         )}
       </form>
     </div>
+    <Footer/>
+    </>
   );
 }

@@ -41,15 +41,12 @@ export default function GroupsPage() {
   const fetchGroups = async () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/groups`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        credentials: 'include', // 🔥 ADD THIS
       })
       
       if (!response.ok) throw new Error('Failed to fetch groups')
       
       const { data } = await response.json()
-      // Ensure each group has a category
       const groupsWithCategory = data.map(group => ({
         ...group,
         category: group.category || 'other'
@@ -61,6 +58,7 @@ export default function GroupsPage() {
       setLoading(false)
     }
   }
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -97,23 +95,22 @@ export default function GroupsPage() {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/creategroup`, {
         method: 'POST',
+        credentials: 'include', // 🔥 ADD THIS
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify(formData)
       })
-      
-
+  
       if (!response.ok) {
         const errorData = await response.json()
         throw new Error(errorData.message || 'Failed to create group')
       }
-
+  
       const { group } = await response.json()
       setGroups(prev => [{
         ...group,
-        category: group.category || 'other' // Ensure category exists
+        category: group.category || 'other'
       }, ...prev])
       setShowCreateModal(false)
       setFormData({
@@ -132,6 +129,7 @@ export default function GroupsPage() {
       setIsSubmitting(false)
     }
   }
+  
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -223,9 +221,9 @@ export default function GroupsPage() {
                   </div>
                   
                   <div className={styles.statItem}>
-                    <FiDollarSign className={styles.statIcon} />
-                    <span>{formatCurrency(group.price)}/{group.frequency}</span>
-                  </div>
+  <span className={styles.statIcon}>₦</span>
+  <span>{formatCurrency(group.price)}/{group.frequency}</span>
+</div>
                 </div>
                 
                 <div className={styles.links}>

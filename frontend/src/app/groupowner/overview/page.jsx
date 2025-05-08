@@ -60,20 +60,19 @@ export default function Dashboard() {
     const fetchDashboardData = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/overview`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        })
-        
-        if (!response.ok) throw new Error('Failed to fetch dashboard data')
-        const data = await response.json()
-        setDashboardData(data.data)
+          credentials: 'include' // ✅ Include cookies!
+        });
+    
+        if (!response.ok) throw new Error('Failed to fetch dashboard data');
+        const data = await response.json();
+        setDashboardData(data.data);
       } catch (err) {
-        setError(err.message)
+        setError(err.message);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
+    
   
     fetchDashboardData()
   }, [])
