@@ -16,7 +16,7 @@ const app = express();
 
 // --- 🛡️ CORS Configuration ---
 app.use(cors({
-  origin: ['https://www.subchatpro.com', 'http://localhost:3000'], // Frontend URLs
+  origin: ['https://www.subchatpro.com', 'https://subchatpro.onrender.com'], // Add frontend and backend URLs
   credentials: true, // 🔥 allow cookies!
 }));
 
