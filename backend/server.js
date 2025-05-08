@@ -1,17 +1,11 @@
+// server.js
+
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser'); // 🍪 <--- ADDED THIS
-
-// Routes
-const authRoutes = require('./routes/authRoutes'); // Auth Routes
-const groupOwnerRoutes = require('./routes/groupOwnerRoutes'); // Group Owner Routes
-const groupRoutes = require('./routes/grouproutes'); // Group Routes
-const subscriptionRoutes = require('./routes/subscriptionRoutes'); // Subscription Routes
-const paystackWebhookRoutes = require('./routes/paystackWebhookRoutes'); // Paystack Webhook Routes
-const transactionRoutes = require('./routes/transactionsRoutes'); // Transaction Routes
+const cookieParser = require('cookie-parser');
 
 // Load environment variables
 dotenv.config();
@@ -19,39 +13,48 @@ dotenv.config();
 // Initialize express app
 const app = express();
 
-// CORS Configuration - should come before other middleware
+// --- 🛡️ CORS Configuration ---
 app.use(cors({
-  origin: ['https://www.subchatpro.com', 'http://localhost:3000'], // Added localhost for development
+  origin: ['https://www.subchatpro.com', 'http://localhost:3000'], // frontend URLs
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-paystack-signature'],
-  credentials: true,
+  credentials: true, // 🔥 THIS IS CRITICAL for cookie handling!
   optionsSuccessStatus: 200
 }));
 
-// 🍪 Cookie Parser - MUST come BEFORE routes/middlewares that need cookies
+// --- 🍪 Cookie Parser (MUST be early) ---
 app.use(cookieParser());
 
-// Middleware for parsing normal JSON
+// --- 📝 Body Parsers ---
+
+// Parse normal JSON payloads
 app.use(express.json());
 
-// Use bodyParser to handle raw JSON for Paystack webhook
+// Special body parser for Paystack webhook
 app.use('/api/subscribe/paystack/webhook', bodyParser.raw({ type: 'application/json' }));
 
-// Routes
-app.use('/api/auth', authRoutes); // Auth Routes
-app.use('/api/groupowner', groupOwnerRoutes); // Group Owner Routes
-app.use('/api/groups', groupRoutes); // Group Routes
-app.use('/api/subscribe', subscriptionRoutes); // Subscription Routes
-app.use('/api/subscribe/paystack/webhook', paystackWebhookRoutes); // Paystack Webhook Routes
-app.use('/api/transactions', transactionRoutes); // Transaction Routes
+// --- 📦 API Routes ---
+const authRoutes = require('./routes/authRoutes');
+const groupOwnerRoutes = require('./routes/groupOwnerRoutes');
+const groupRoutes = require('./routes/grouproutes');
+const subscriptionRoutes = require('./routes/subscriptionRoutes');
+const paystackWebhookRoutes = require('./routes/paystackWebhookRoutes');
+const transactionRoutes = require('./routes/transactionsRoutes');
 
-// MongoDB Connection
-mongoose
-  .connect(process.env.MONGO_URI)
+app.use('/api/auth', authRoutes);
+app.use('/api/groupowner', groupOwnerRoutes);
+app.use('/api/groups', groupRoutes);
+app.use('/api/subscribe', subscriptionRoutes);
+app.use('/api/subscribe/paystack/webhook', paystackWebhookRoutes);
+app.use('/api/transactions', transactionRoutes);
+
+// --- 🌍 MongoDB Connection ---
+mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');
     app.listen(process.env.PORT || 5002, () => {
       console.log(`🚀 Server running on port ${process.env.PORT || 5002}`);
     });
   })
-  .catch((err) => console.error('❌ DB connection error:', err));
+  .catch((err) => console.error('❌ MongoDB connection error:', err));
+

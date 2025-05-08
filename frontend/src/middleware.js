@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
-import { NextRequest } from "next/server";
 
 export function middleware(req) {
   console.log("🔒 SubChat Middleware is running...");
 
-  const token = req.cookies.get("token")?.value; // grab token
-  const role = req.cookies.get("role")?.value;   // grab role
+  const token = req.cookies.get("token");
+  const role = req.cookies.get("role");
 
-  console.log("🔑 Token (cookie):", token);
-  console.log("👤 Role (cookie):", role);
+  console.log("🔑 Token (cookie):", token?.value);
+  console.log("👤 Role (cookie):", role?.value);
 
   if (!token || !role) {
     console.log("❌ No token or role found, redirecting to /unauthorized");
@@ -24,18 +23,16 @@ export function middleware(req) {
   console.log(`📍 Requested path: ${currentPath}`);
 
   for (const [allowedRole, paths] of Object.entries(protectedRoutes)) {
-    const isProtected = paths.some(path => currentPath.startsWith(path));
-    if (isProtected && role !== allowedRole) {
-      console.log(`⛔ Unauthorized access by ${role} to ${currentPath}`);
+    const isProtected = paths.some((path) => currentPath.startsWith(path));
+    if (isProtected && role.value !== allowedRole) {
+      console.log(`⛔ Unauthorized access by ${role.value} to ${currentPath}`);
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
   }
 
-  // ✅ Passed all checks
   return NextResponse.next();
 }
 
-// 👇 Apply middleware only on these paths
 export const config = {
   matcher: ["/groupowner/:path*", "/subscriber/:path*"],
 };
