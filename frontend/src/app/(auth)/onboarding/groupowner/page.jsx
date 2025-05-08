@@ -52,7 +52,7 @@ export default function GroupOwnerRegistration() {
   ];
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const timer = setTimeout(async () => {
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/me`,
@@ -71,10 +71,11 @@ export default function GroupOwnerRegistration() {
         console.error('⚠️ Error fetching user data:', error);
         router.push('/login');
       }
-    };
+    }, 300); // small 300ms delay
   
-    fetchUser();
+    return () => clearTimeout(timer);
   }, [router]);
+  
   
 
   const handleChange = (e) => {
