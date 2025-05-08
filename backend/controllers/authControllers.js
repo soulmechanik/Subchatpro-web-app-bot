@@ -361,11 +361,11 @@ exports.login = async (req, res) => {
     console.log("🎭 Role:", user.role);
     console.log("📦 Onboarded:", user.onboarded);
 
-    // Set token in an HttpOnly cookie
+    // ✅ Set token in an HttpOnly cookie with SameSite: 'None'
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', 
-      sameSite: 'Strict',
+      sameSite: 'None', // ✅ MUST be 'None' for cross-origin cookies
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -373,16 +373,15 @@ exports.login = async (req, res) => {
     res.cookie('role', user.role, {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Strict',
+      sameSite: 'None', // ✅ Same change here too
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     console.log("🔑 Sending response with user and token...");
 
-    // ✅ FIX: Include token in the response!
     res.status(200).json({
       message: 'Login successful',
-      token, // <-- added
+      token,
       user: {
         id: user._id,
         email: user.email,
@@ -397,6 +396,7 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
+
 
 
 

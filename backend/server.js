@@ -15,9 +15,11 @@ dotenv.config();
 const app = express();
 
 // --- 🛡️ CORS Configuration ---
+const cors = require('cors');
+
 app.use(cors({
-  origin: ['https://www.subchatpro.com', 'https://subchatpro.onrender.com'], // Add frontend and backend URLs
-  credentials: true, // 🔥 allow cookies!
+  origin: 'https://www.subchatpro.com', // ONLY your frontend
+  credentials: true
 }));
 
 // --- 🍪 Cookie Parser (MUST be early) ---
