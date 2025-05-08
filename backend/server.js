@@ -17,8 +17,11 @@ const app = express();
 // --- 🛡️ CORS Configuration ---
 
 app.use(cors({
-  origin: 'https://www.subchatpro.com', // ONLY your frontend
-  credentials: true
+  origin: 'https://www.subchatpro.com',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token'],
+  exposedHeaders: ['set-cookie'] // ✅ important for cookies sometimes
 }));
 
 // --- 🍪 Cookie Parser (MUST be early) ---
