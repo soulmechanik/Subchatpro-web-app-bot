@@ -3,11 +3,14 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/user");
 
 const protect = asyncHandler(async (req, res, next) => {
-  let token;
-
   console.log("🔒 SubChat Protect Middleware running...");
 
-  // 1️⃣ Check Authorization header
+  // --- 🍪 Log incoming cookies ---
+  console.log("🍪 Incoming Cookies:", req.cookies);
+
+  let token;
+
+  // 1️⃣ Try to get token from Authorization header
   if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
     const splitToken = req.headers.authorization.split(" ")[1];
     if (splitToken && splitToken !== "null") {
@@ -16,32 +19,32 @@ const protect = asyncHandler(async (req, res, next) => {
     }
   }
 
-  // 2️⃣ Otherwise fallback to Cookies
+  // 2️⃣ Otherwise, fallback to Cookies
   if (!token && req.cookies?.token) {
     token = req.cookies.token;
-    console.log("🍪 Extracted token from cookie:", token);
+    console.log("🍪 Extracted token from Cookie:", token);
   }
 
-  // 🚫 Still no token? Reject
+  // 🚫 No token at all? Block access
   if (!token) {
-    console.log("🚫 No token found (Authorization header or cookie)");
+    console.log("🚫 No token found (neither Authorization header nor cookie). Sending 401.");
     return res.status(401).json({ message: "Not authorized, token missing" });
   }
 
   try {
-    // ✅ Verify token
+    // 3️⃣ Verify Token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("🛡️ Decoded Token Payload:", decoded);
+    console.log("🛡️ Decoded JWT Payload:", decoded);
 
-    // ✅ Find user
+    // 4️⃣ Find the user in DB
     const user = await User.findById(decoded.userId).select("_id role");
 
     if (!user) {
-      console.log("❌ User not found in database");
+      console.log("❌ User not found in database for decoded token userId:", decoded.userId);
       return res.status(401).json({ message: "User not found" });
     }
 
-    // ✅ Attach user to req
+    // 5️⃣ Attach user to request
     req.user = {
       _id: user._id.toString(),
       userId: user._id.toString(),
@@ -51,7 +54,7 @@ const protect = asyncHandler(async (req, res, next) => {
       isSubscriber: user.role === "GroupSubscriber",
     };
 
-    console.log("✅ Authenticated User attached to req.user:", req.user);
+    console.log("✅ User authenticated successfully, attached to req.user:", req.user);
 
     next();
   } catch (error) {
