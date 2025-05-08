@@ -361,23 +361,26 @@ exports.login = async (req, res) => {
     console.log("🎭 Role:", user.role);
     console.log("📦 Onboarded:", user.onboarded);
 
-    // Set token in a cookie accessible by middleware (without httpOnly)
+ // Set token in a cookie
 res.cookie('token', token, {
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'None',
-  domain: '.subchatpro.com', // ✅ <-- VERY IMPORTANT
+  httpOnly: true,
+  secure: true,  // Ensure secure cookies are set for production
+  sameSite: 'None',  // Required for cross-site cookies
+  domain: '.subchatpro.com', // Adjust to your production domain
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  path: '/', // Make sure the cookie is accessible on all paths
+  path: '/',  // Make sure it's set for the root path
 });
 
-// Set role in a readable cookie (optional for frontend)
+// Set role in a readable cookie (optional if needed by frontend)
 res.cookie('role', user.role, {
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'None',
-  domain: '.subchatpro.com', // ✅
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  path: '/', // Ensure the cookie is accessible on all paths
+  httpOnly: false,  // Set to false so it can be accessed from frontend (only if needed)
+  secure: true,     // Secure flag for production
+  sameSite: 'None', // SameSite=None for cross-site cookies
+  domain: '.subchatpro.com',
+  maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days
+  path: '/',  // Set to root path
 });
+
 
 
     console.log("🔑 Sending response with user and token...");
