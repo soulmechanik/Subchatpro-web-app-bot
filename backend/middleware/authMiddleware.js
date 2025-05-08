@@ -10,19 +10,19 @@ const protect = asyncHandler(async (req, res, next) => {
 
   let token;
 
-  // 1️⃣ Try to get token from Authorization header
-  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+  // 1️⃣ First, check if token is in Cookies
+  if (req.cookies?.token) {
+    token = req.cookies.token;
+    console.log("🍪 Extracted token from Cookie:", token);
+  }
+
+  // 2️⃣ Fallback to Authorization header if no token in Cookies
+  if (!token && req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
     const splitToken = req.headers.authorization.split(" ")[1];
     if (splitToken && splitToken !== "null") {
       token = splitToken;
       console.log("🔑 Extracted token from Authorization header:", token);
     }
-  }
-
-  // 2️⃣ Otherwise, fallback to Cookies
-  if (!token && req.cookies?.token) {
-    token = req.cookies.token;
-    console.log("🍪 Extracted token from Cookie:", token);
   }
 
   // 🚫 No token at all? Block access
