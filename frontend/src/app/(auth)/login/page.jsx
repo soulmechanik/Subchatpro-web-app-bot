@@ -64,7 +64,7 @@ export default function LoginPage() {
       } else {
         console.log("🚀 User onboarded, redirecting to overview...");
         if (user.role === 'GroupOwner') {
-          router.replace('/groupowner/overview');
+          window.location.replace('/groupowner/overview');
         } else if (user.role === 'GroupSubscriber') {
           router.replace('/groupsubscriber/overview');
         } else {
