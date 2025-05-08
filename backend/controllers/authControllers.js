@@ -364,18 +364,21 @@ exports.login = async (req, res) => {
     // ✅ Set token in an HttpOnly cookie with SameSite: 'None'
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', 
-      sameSite: 'None', // ✅ MUST be 'None' for cross-origin cookies
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'None',
+      domain: '.subchatpro.com', // ✅ <-- VERY IMPORTANT
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     // Set role in a readable cookie (optional if needed by frontend)
     res.cookie('role', user.role, {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'None', // ✅ Same change here too
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: 'None',
+      domain: '.subchatpro.com', // ✅
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+    
 
     console.log("🔑 Sending response with user and token...");
 
@@ -402,12 +405,27 @@ exports.login = async (req, res) => {
 
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select("-password");  // Exclude password from response
+    // 🛑 FIRST: Check if token exists in cookies
+    const token = req.cookies.token;
+
+    if (!token) {
+      return res.status(401).json({ message: "Not authorized, token missing" });
+    }
+
+    // 🛡️ Verify token
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    // 🔥 Now decoded contains { userId, role }
+    const user = await User.findById(decoded.userId).select("-password");
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+
     res.status(200).json(user);  // Send the user data back
+
   } catch (error) {
+    console.error("💥 Error fetching user data:", error);
     res.status(500).json({ message: "Error fetching user data" });
   }
 };
