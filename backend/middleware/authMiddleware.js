@@ -4,35 +4,44 @@ const User = require("../models/user");
 
 const protect = asyncHandler(async (req, res, next) => {
   console.log("🔒 SubChat Protect Middleware running...");
+  console.log("🍪 Incoming cookies:", req.cookies);
+  console.log("📄 Incoming headers:", req.headers);
 
-  let token;
+  let token = null;
 
-  // 1️⃣ Only check Authorization header for token
-  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
-    token = req.headers.authorization.split(" ")[1];
-    console.log("🔑 Extracted token from Authorization header:", token);
+  // 🛑 FIRST: Try to get token from cookie
+  if (req.cookies && req.cookies.token) {
+    token = req.cookies.token;
+    console.log("🍪 Extracted token from Cookie:", token);
+  }
+  // ➡️ SECOND: If no cookie, try Authorization header
+  else if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+    const headerToken = req.headers.authorization.split(" ")[1];
+    if (headerToken !== "undefined") {
+      token = headerToken;
+      console.log("🔑 Extracted token from Authorization header:", token);
+    } else {
+      console.log("⚠️ Authorization header token is 'undefined'. Ignoring.");
+    }
   }
 
-  // 🚫 No token at all? Block access
+  // 🚫 No token at all
   if (!token) {
-    console.log("🚫 No token found in Authorization header. Sending 401.");
+    console.log("🚫 No token found. Sending 401 Unauthorized.");
     return res.status(401).json({ message: "Not authorized, token missing" });
   }
 
   try {
-    // 2️⃣ Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log("🛡️ Decoded JWT Payload:", decoded);
 
-    // 3️⃣ Find the user in DB
     const user = await User.findById(decoded.userId).select("_id role");
 
     if (!user) {
-      console.log("❌ User not found for decoded token userId:", decoded.userId);
+      console.log("❌ User not found for decoded userId:", decoded.userId);
       return res.status(401).json({ message: "User not found" });
     }
 
-    // 4️⃣ Attach user to request
     req.user = {
       _id: user._id.toString(),
       userId: user._id.toString(),
