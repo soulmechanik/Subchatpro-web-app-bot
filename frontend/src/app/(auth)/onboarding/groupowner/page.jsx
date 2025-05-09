@@ -54,19 +54,9 @@ export default function GroupOwnerRegistration() {
   useEffect(() => {
     const timer = setTimeout(async () => {
       try {
-        const token = localStorage.getItem('token');  // Get the token from localStorage
-        if (!token) {
-          router.push('/login');  // If there's no token, redirect to login
-          return;
-        }
-  
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/me`,
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`  // Attach token in the Authorization header
-            }
-          }
+          { withCredentials: true }   // 👈 important
         );
         const user = response.data;
         console.log('✅ User fetched:', user);
@@ -81,10 +71,11 @@ export default function GroupOwnerRegistration() {
         console.error('⚠️ Error fetching user data:', error);
         router.push('/login');
       }
-    }, 300); // small 300ms delay
+    }, 300);
   
     return () => clearTimeout(timer);
   }, [router]);
+  
   
   
   
@@ -160,11 +151,6 @@ export default function GroupOwnerRegistration() {
     }
   
     try {
-      const token = localStorage.getItem('token');  // Get the token from localStorage
-      if (!token) {
-        throw new Error('Token is required');
-      }
-  
       const userRes = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/onboard`,
         {
@@ -175,18 +161,10 @@ export default function GroupOwnerRegistration() {
           accountNumber: formData.bankDetails.accountNumber,
           bankName: formData.bankDetails.bankName,
         },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`  // Attach token in the Authorization header
-          }
-        }
+        { withCredentials: true }  // 👈 important
       );
   
       console.log('✅ Onboard successful:', userRes.data);
-  
-      if (!userRes.data || !userRes.data.profile) {
-        throw new Error('User onboarding failed');
-      }
   
       const groupRes = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/creategroup`,
@@ -200,20 +178,11 @@ export default function GroupOwnerRegistration() {
           subscriptionPrice: formData.subscriptionPrice,
           currency: formData.currency,
         },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`  // Attach token in the Authorization header
-          }
-        }
+        { withCredentials: true }  // 👈 important
       );
   
       console.log('✅ Group created successfully:', groupRes.data);
   
-      if (!groupRes.data || !groupRes.data.group) {
-        throw new Error('Group creation failed');
-      }
-  
-      // 🚀 Finally redirect
       router.push('/groupowner/overview');
   
     } catch (err) {
@@ -223,6 +192,7 @@ export default function GroupOwnerRegistration() {
       setLoading(false);
     }
   };
+  
   
   
   
