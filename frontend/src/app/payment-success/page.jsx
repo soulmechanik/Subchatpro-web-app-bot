@@ -1,58 +1,77 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+'use client';
 
-const PaymentSuccess = () => {
-  const [paymentStatus, setPaymentStatus] = useState(null);
-  const [error, setError] = useState(null);
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation'; // ⭐ correct hook
+import axios from 'axios';
+import styles from './PaymentSuccess.module.scss'; // adjust if needed
+
+export default function PaymentSuccess() {
+  const searchParams = useSearchParams(); // ⭐ use this
+  const reference = searchParams.get('reference');
+  const trxref = searchParams.get('trxref');
+
+  const [status, setStatus] = useState('checking'); // 'checking', 'success', 'failed', 'error'
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    const fetchPaymentStatus = async () => {
-      const paymentReference = new URLSearchParams(window.location.search).get('reference');
-      if (!paymentReference) {
-        setError('No payment reference found.');
-        return;
-      }
+    if (!reference && !trxref) return;
 
+    const verifyPayment = async () => {
       try {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5002';
-        const response = await axios.post(`${backendUrl}/api/transactions/payment/status`, {
-          reference: paymentReference,
-        });
-        setPaymentStatus(response.data);
+        const paymentReference = reference || trxref;
+
+        const res = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/transactions/payment/status`,
+          { reference: paymentReference },
+          { withCredentials: true }
+        );
+
+        console.log('✅ Payment verification result:', res.data);
+
+        if (res.data?.payment?.status === 'success') {
+          setStatus('success');
+        } else {
+          setStatus('failed');
+        }
       } catch (err) {
-        setError('Failed to fetch payment status.');
-        console.error('Error fetching payment status:', err);
+        console.error('❌ Error verifying payment:', err);
+        setStatus('error');
+        setErrorMessage(err.response?.data?.message || 'An unexpected error occurred.');
       }
     };
 
-    fetchPaymentStatus();
-  }, []);
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  if (paymentStatus === null) {
-    return <div>Loading...</div>;
-  }
+    verifyPayment();
+  }, [reference, trxref]);
 
   return (
-    <div className="payment-success">
-      {paymentStatus.success ? (
-        <div>
-          <h1>Payment Successful!</h1>
-          <p>Your payment for {paymentStatus.amount} has been successfully processed.</p>
-          <p>Subscription ID: {paymentStatus.subscriptionId}</p>
-          <p>Payment Reference: {paymentStatus.reference}</p>
+    <div className={styles.container}>
+      {status === 'checking' && (
+        <div className={styles.message}>
+          <h2>🔄 Verifying your payment...</h2>
+          <p>Please wait a moment.</p>
         </div>
-      ) : (
-        <div>
-          <h1>Payment Failed</h1>
-          <p>There was an issue with your payment. Please try again later.</p>
+      )}
+
+      {status === 'success' && (
+        <div className={styles.message}>
+          <h2>🎉 Payment Successful!</h2>
+          <p>Thank you for your payment. Your subscription is now active!</p>
+        </div>
+      )}
+
+      {status === 'failed' && (
+        <div className={styles.message}>
+          <h2>⚠️ Payment Failed or Incomplete</h2>
+          <p>We couldn't verify your payment. Please try again or contact support.</p>
+        </div>
+      )}
+
+      {status === 'error' && (
+        <div className={styles.message}>
+          <h2>❌ Error Verifying Payment</h2>
+          <p>{errorMessage}</p>
         </div>
       )}
     </div>
   );
-};
-
-export default PaymentSuccess;
+}

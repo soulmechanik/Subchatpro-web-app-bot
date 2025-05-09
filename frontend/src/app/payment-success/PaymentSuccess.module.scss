@@ -1,0 +1,33 @@
+/* PaymentSuccess.module.scss */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    text-align: center;
+  
+    .message {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      max-width: 500px;
+      width: 100%;
+  
+      h2 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: #333;
+      }
+  
+      p {
+        font-size: 1.2rem;
+        color: #666;
+      }
+    }
+  }
+  
