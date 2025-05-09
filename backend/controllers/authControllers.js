@@ -357,27 +357,27 @@ exports.login = asyncHandler(async (req, res) => {
 
   console.log("🛠️ [4/6] Generating JWT Token...");
   const token = jwt.sign(
-    { userId: user._id, role: user.role },
+    { userId: user._id.toString(), role: user.role },
     process.env.JWT_SECRET,
     { expiresIn: '7d' }
   );
 
   console.log("🔑 [4/6] Token Generated Successfully");
 
-  // 🔥 Set the token into a Secure HTTP-Only Cookie
-  const cookie = serialize('token', token, {
+  // 🔥 Set the token in a secure cookie
+  const serialized = serialize('token', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: process.env.NODE_ENV === 'production', // true on Vercel
+    sameSite: 'None', // IMPORTANT for cross-domain
     path: '/',
-    maxAge: 7 * 24 * 60 * 60, // 7 days
+    maxAge: 60 * 60 * 24 * 7, // 7 days
   });
 
-  res.setHeader('Set-Cookie', cookie);
+  res.setHeader('Set-Cookie', serialized);
 
   console.log("🚀 [5/5] Login Successful - Sending Response");
 
-  res.json({
+  res.status(200).json({
     message: "Login successful",
     user: {
       id: user._id,
