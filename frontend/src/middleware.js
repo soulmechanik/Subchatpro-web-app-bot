@@ -1,46 +1,51 @@
 import { NextResponse } from "next/server";
+import { jwtVerify } from "jose";
 
-export function middleware(req) {
-  console.log("🔒 SubChat Middleware is running...");
+export async function middleware(req) {
+    console.log("Middleware is running...");
 
-  const token = req.cookies.get('token')?.value;
-  const role = req.cookies.get('role')?.value;
+    const token = req.cookies.get("token")?.value;
+    console.log("Token from cookies:", token);
 
-  console.log("🔑 Token:", token ? "[Present]" : "[Missing]");
-  console.log("👤 Role:", role ? "[Present]" : "[Missing]");
-
-  if (!token || !role) {
-    console.log("❌ No token or role found in cookies, redirecting to /unauthorized");
-    return NextResponse.redirect(new URL("/unauthorized", req.url));
-  }
-
-  const protectedRoutes = {
-    GroupOwner: ["/groupowner"],
-    GroupSubscriber: ["/subscriber"],
-  };
-
-  const currentPath = req.nextUrl.pathname;
-  console.log(`📍 Requested path: ${currentPath}`);
-
-  let isAuthorized = false;
-  for (const [allowedRole, paths] of Object.entries(protectedRoutes)) {
-    const isProtected = paths.some(path => currentPath.startsWith(path));
-    if (isProtected && role === allowedRole) {
-      console.log(`✅ Authorized access for ${role} to ${currentPath}`);
-      isAuthorized = true;
-      break;
+    if (!token) {
+        console.log("No token found, redirecting to unauthorized");
+        return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
-  }
 
-  if (!isAuthorized) {
-    console.log(`⛔ Unauthorized access by ${role} to ${currentPath}`);
-    return NextResponse.redirect(new URL("/unauthorized", req.url));
-  }
+    try {
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+        const { payload } = await jwtVerify(token, secret);
 
-  console.log("✅ Access granted, proceeding with the request.");
-  return NextResponse.next();
+        console.log("JWT payload:", payload);
+
+        const role = payload.role;
+        console.log("Middleware detected role:", role);
+
+        const protectedRoutes = {
+            GroupOwner: ["/groupowner"],
+            Subscriber: ["/subscriber"],
+        };
+
+        console.log(`Checking access for role ${role} on path ${req.nextUrl.pathname}`);
+
+        for (const [allowedRole, routes] of Object.entries(protectedRoutes)) {
+            if (
+                routes.some(route => req.nextUrl.pathname.startsWith(route)) &&
+                role !== allowedRole
+            ) {
+                console.log(`Unauthorized Access: ${req.nextUrl.pathname} for role ${role}`);
+                return NextResponse.redirect(new URL("/unauthorized", req.url));
+            }
+        }
+
+        return NextResponse.next();
+
+    } catch (error) {
+        console.error("JWT verification failed:", error);
+        return NextResponse.redirect(new URL("/unauthorized", req.url));
+    }
 }
 
 export const config = {
-  matcher: ["/groupowner/:path*", "/subscriber/:path*"],
+    matcher: ["/groupowner/:path*", "/subscriber/:path*"],
 };

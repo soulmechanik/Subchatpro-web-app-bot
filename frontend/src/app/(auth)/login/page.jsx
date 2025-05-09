@@ -1,10 +1,10 @@
 'use client'
 
-import styles from './login.module.scss'
 import { useState } from 'react'
 import Link from 'next/link'
+import styles from './login.module.scss'
 import Header from '../../../components/Header/Header'
-import axios from 'axios'
+import axiosInstance from '../../../utils/axiosInstance' // Import axiosInstance
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import IconButton from '@mui/material/IconButton'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -34,25 +34,26 @@ export default function LoginPage() {
 
       console.log("📨 Sending login request...");
 
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `${backendUrl}/api/auth/login`,
         { email, password },
         { withCredentials: true }
       );
 
-      const { user } = response.data;
+      const { user, token } = response.data;
 
       console.log("✅ Login successful!");
       console.log("🆔 UserID:", user.id);
       console.log("🎭 Role:", user.role);
-      console.log("📦 Onboarded:", user.onboarded);
+      console.log("📦 Onboarded:", user.onboarding);
 
-      // Save user details if needed
+      // Save token in localStorage
+      localStorage.setItem('token', token);
       localStorage.setItem('userId', user.id);
       localStorage.setItem('role', user.role);
 
-      // Redirect properly
-      if (!user.onboarded) {
+      // Redirect properly based on onboarding status and role
+      if (!user.onboarding) {
         console.log("🚀 User not onboarded, redirecting to onboarding...");
         if (user.role === 'GroupOwner') {
           router.replace('/onboarding/groupowner');

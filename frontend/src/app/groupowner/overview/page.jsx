@@ -8,6 +8,7 @@ import {
 } from 'react-icons/fi'
 import { AreaChart, Area, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import styles from './overview.module.scss'
+import axiosInstance from '@/utils/axiosInstance';
 
 
 const formatCurrency = (amount) => {
@@ -56,26 +57,21 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/overview`, {
-          credentials: 'include' // ✅ Include cookies!
-        });
-    
-        if (!response.ok) throw new Error('Failed to fetch dashboard data');
-        const data = await response.json();
-        setDashboardData(data.data);
+        const response = await axiosInstance.get('/api/groupowner/overview'); // 👈 use axiosInstance
+        setDashboardData(response.data.data);
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
-    }
-    
+    };
   
-    fetchDashboardData()
-  }, [])
+    fetchDashboardData();
+  }, []);
 
   if (loading) {
     return (

@@ -54,9 +54,19 @@ export default function GroupOwnerRegistration() {
   useEffect(() => {
     const timer = setTimeout(async () => {
       try {
+        const token = localStorage.getItem('token');  // Get the token from localStorage
+        if (!token) {
+          router.push('/login');  // If there's no token, redirect to login
+          return;
+        }
+  
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/me`,
-          { withCredentials: true }
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`  // Attach token in the Authorization header
+            }
+          }
         );
         const user = response.data;
         console.log('✅ User fetched:', user);
@@ -75,6 +85,7 @@ export default function GroupOwnerRegistration() {
   
     return () => clearTimeout(timer);
   }, [router]);
+  
   
   
 
@@ -149,6 +160,11 @@ export default function GroupOwnerRegistration() {
     }
   
     try {
+      const token = localStorage.getItem('token');  // Get the token from localStorage
+      if (!token) {
+        throw new Error('Token is required');
+      }
+  
       const userRes = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groupowner/onboard`,
         {
@@ -159,12 +175,15 @@ export default function GroupOwnerRegistration() {
           accountNumber: formData.bankDetails.accountNumber,
           bankName: formData.bankDetails.bankName,
         },
-        { withCredentials: true }
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`  // Attach token in the Authorization header
+          }
+        }
       );
   
       console.log('✅ Onboard successful:', userRes.data);
   
-      // 🔥 Check if profile exists, not status
       if (!userRes.data || !userRes.data.profile) {
         throw new Error('User onboarding failed');
       }
@@ -181,7 +200,11 @@ export default function GroupOwnerRegistration() {
           subscriptionPrice: formData.subscriptionPrice,
           currency: formData.currency,
         },
-        { withCredentials: true }
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`  // Attach token in the Authorization header
+          }
+        }
       );
   
       console.log('✅ Group created successfully:', groupRes.data);
@@ -200,6 +223,7 @@ export default function GroupOwnerRegistration() {
       setLoading(false);
     }
   };
+  
   
   
   
