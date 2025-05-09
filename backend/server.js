@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
@@ -13,11 +12,9 @@ dotenv.config();
 const app = express();
 
 // --- 🛡️ CORS Configuration ---
-
 const allowedOrigins = [
-  process.env.FRONTEND_URL || "http://localhost:3000",
-  "http://localhost:3000",
-  "https://www.subchatpro.com"
+  process.env.FRONTEND_URL || "http://localhost:3000",  // for local development
+  "https://www.subchatpro.com",  // production frontend URL
 ];
 
 app.use(cors({
@@ -29,7 +26,7 @@ app.use(cors({
       callback(new Error("CORS not allowed"), false);
     }
   },
-  credentials: true,
+  credentials: true, // Allow cookies (important for login)
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token'],
   exposedHeaders: ['set-cookie']
