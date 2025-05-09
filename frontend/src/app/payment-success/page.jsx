@@ -12,6 +12,7 @@ function PaymentChecker() {
 
   const [status, setStatus] = useState('checking');
   const [errorMessage, setErrorMessage] = useState('');
+  const [groupLink, setGroupLink] = useState('');
 
   useEffect(() => {
     if (!reference && !trxref) return;
@@ -30,6 +31,7 @@ function PaymentChecker() {
 
         if (res.data?.payment?.status === 'success') {
           setStatus('success');
+          setGroupLink(res.data.payment.groupLink || '');
         } else {
           setStatus('failed');
         }
@@ -46,8 +48,9 @@ function PaymentChecker() {
   return (
     <div className={styles.container}>
       {status === 'checking' && (
-        <div className={styles.message}>
-          <h2>🔄 Verifying your payment...</h2>
+        <div className={styles.loading}>
+          <div className={styles.spinner}></div>
+          <h2>Verifying your payment...</h2>
           <p>Please wait a moment.</p>
         </div>
       )}
@@ -56,6 +59,18 @@ function PaymentChecker() {
         <div className={styles.message}>
           <h2>🎉 Payment Successful!</h2>
           <p>Thank you for your payment. Your subscription is now active!</p>
+
+          {groupLink && (
+            <a
+              href={groupLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.joinButton}
+            >
+              Join Group
+            </a>
+          )}
+          {/* If you want you can add a note if no groupLink, but it's not necessary */}
         </div>
       )}
 
@@ -78,7 +93,12 @@ function PaymentChecker() {
 
 export default function PaymentSuccessPage() {
   return (
-    <Suspense fallback={<div className={styles.message}><h2>Loading...</h2></div>}>
+    <Suspense fallback={
+      <div className={styles.loading}>
+        <div className={styles.spinner}></div>
+        <h2>Loading...</h2>
+      </div>
+    }>
       <PaymentChecker />
     </Suspense>
   );

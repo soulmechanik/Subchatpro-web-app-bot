@@ -1,33 +1,89 @@
-/* PaymentSuccess.module.scss */
-
 .container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
     min-height: 80vh;
-    padding: 2rem;
-    background-color: #f9f9f9;
     text-align: center;
+    background: #fafafa;
+  }
   
-    .message {
-      background: #fff;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      max-width: 500px;
-      width: 100%;
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
   
-      h2 {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-        color: #333;
-      }
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #e0e0e0;
+      border-top: 6px solid #3b82f6; // Blue color
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
   
-      p {
-        font-size: 1.2rem;
-        color: #666;
-      }
+    h2 {
+      font-size: 1.75rem;
+      color: #333;
+    }
+  
+    p {
+      color: #666;
+      font-size: 1rem;
+    }
+  }
+  
+  .message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e293b; // Dark Slate
+      margin-bottom: 0.5rem;
+    }
+  
+    p {
+      font-size: 1.1rem;
+      color: #475569; // Slightly lighter
+      max-width: 600px;
+    }
+  }
+  
+  .joinButton {
+    margin-top: 2rem;
+    background-color: #3b82f6; // Blue
+    color: #ffffff;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 9999px; // Pill shape
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+  
+    &:hover {
+      background-color: #2563eb; // Slightly darker blue
+      transform: translateY(-2px);
+    }
+  
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
     }
   }
   

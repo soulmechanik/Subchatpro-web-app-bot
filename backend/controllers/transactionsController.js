@@ -133,7 +133,8 @@ exports.getPaymentStatus = async (req, res) => {
 
     console.log('🔍 Looking for payment with reference:', reference);
 
-    const payment = await Payment.findOne({ paystackRef: reference });
+    // Populate the groupId so we can access telegramGroupLink
+    const payment = await Payment.findOne({ paystackRef: reference }).populate('groupId');
 
     if (!payment) {
       console.warn('⚠️ No payment found for reference:', reference);
@@ -146,6 +147,8 @@ exports.getPaymentStatus = async (req, res) => {
       status: payment.status,
     });
 
+    const telegramGroupLink = payment.groupId?.telegramGroupLink || null;
+
     return res.status(200).json({
       message: 'Payment found',
       payment: {
@@ -154,7 +157,8 @@ exports.getPaymentStatus = async (req, res) => {
         amount: payment.amount,
         paidAt: payment.paidAt,
         subscriptionId: payment.subscriptionId,
-        groupId: payment.groupId,
+        groupId: payment.groupId._id, // just return the id separately
+        groupLink: telegramGroupLink, // this is new
       }
     });
 
