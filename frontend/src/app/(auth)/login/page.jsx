@@ -49,7 +49,11 @@ export default function LoginPage() {
   
       // NO NEED to save token manually. Cookie is already set.
   
-      // Redirect properly based on onboarding status and role
+      // --- VERY IMPORTANT --- //
+      await new Promise((resolve) => setTimeout(resolve, 500)); 
+      // Wait 500ms to ensure the cookie is saved by browser
+      // ---------------------- //
+  
       if (!user.onboarding) {
         console.log("🚀 User not onboarded, redirecting to onboarding...");
         if (user.role === 'GroupOwner') {
@@ -62,7 +66,7 @@ export default function LoginPage() {
       } else {
         console.log("🚀 User onboarded, redirecting to overview...");
         if (user.role === 'GroupOwner') {
-          window.location.replace('/groupowner/overview');
+          router.replace('/groupowner/overview');
         } else if (user.role === 'GroupSubscriber') {
           router.replace('/groupsubscriber/overview');
         } else {
@@ -86,6 +90,7 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+  
   
 
   return (

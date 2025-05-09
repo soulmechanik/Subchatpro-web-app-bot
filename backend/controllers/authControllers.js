@@ -326,12 +326,15 @@ exports.login = asyncHandler(async (req, res) => {
 
   console.log("🔹 [1/6] Login Attempt Initiated - Email:", email);
 
+  // Validate if email and password are provided
   if (!email || !password) {
     console.log("❌ [1/6] Validation Failed - Missing email or password");
     return res.status(400).json({ message: "Email and password are required" });
   }
 
   console.log("🔍 [2/6] Searching User in Database...");
+  
+  // Find the user by email (include password, role, onboarding, and isVerified fields)
   const user = await User.findOne({ email }).select("+password +role +onboarding +isVerified");
 
   if (!user) {
@@ -347,6 +350,8 @@ exports.login = asyncHandler(async (req, res) => {
   });
 
   console.log("🔐 [3/6] Password Verification Initiated");
+  
+  // Compare password hashes
   const isMatch = await bcrypt.compare(password, user.password);
   console.log(`🔐 [3/6] Password Match: ${isMatch ? "✅ Success" : "❌ Failed"}`);
 
@@ -356,27 +361,37 @@ exports.login = asyncHandler(async (req, res) => {
   }
 
   console.log("🛠️ [4/6] Generating JWT Token...");
+  
+  // Generate a JWT token for the user
   const token = jwt.sign(
     { userId: user._id.toString(), role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: '7d' }
+    { expiresIn: '7d' } // 7 days expiration
   );
 
   console.log("🔑 [4/6] Token Generated Successfully");
+  
+  // Log the token for debugging
+  console.log("🔑 [4/6] Token: ", token);
 
-  // 🔥 Set the token in a secure cookie
+  // Serialize the token into a secure cookie
   const serialized = serialize('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // true on Vercel
-    sameSite: 'None', // IMPORTANT for cross-domain
-    path: '/',
-    maxAge: 60 * 60 * 24 * 7, // 7 days
+    httpOnly: true, // Prevent JavaScript access to cookie
+    secure: 'true', // Only secure if in production environment
+    sameSite: 'None', // Allow cross-origin requests
+    path: '/', // Available for all routes
+    maxAge: 60 * 60 * 24 * 7, // 7 days expiration
   });
 
+  // Log if the cookie is set correctly
+  console.log("🔑 [4/6] Setting Cookie - Cookie Header: ", serialized);
+
+  // Set the cookie in the response header
   res.setHeader('Set-Cookie', serialized);
 
   console.log("🚀 [5/5] Login Successful - Sending Response");
 
+  // Send a successful response with user data
   res.status(200).json({
     message: "Login successful",
     user: {
