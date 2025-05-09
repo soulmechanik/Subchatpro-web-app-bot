@@ -47,7 +47,7 @@ export default function ModernLayout({ children }) {
 
         <div className={styles.logoContainer}>
           {!sidebarCollapsed ? (
-            <span className={styles.logoFull}>SubChat</span>
+            <span className={styles.logoFull}>SubChatpro</span>
           ) : (
             <span className={styles.logoCollapsed}>S</span>
           )}
@@ -87,7 +87,7 @@ export default function ModernLayout({ children }) {
        
 
         <div className={styles.userProfile}>
-          <div className={styles.avatar}>JD</div>
+          <div className={styles.avatar}>G-O</div>
           {!sidebarCollapsed && (
             <div className={styles.userInfo}>
               <span className={styles.userName}>Owner</span>

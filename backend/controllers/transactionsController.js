@@ -115,3 +115,55 @@ exports.getTransactions = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+
+
+
+// POST /api/transactions/payment/status
+exports.getPaymentStatus = async (req, res) => {
+  console.log('🔄 Payment status check started');
+
+  try {
+    const { reference } = req.body;
+
+    if (!reference) {
+      console.error('❌ Missing reference in request body');
+      return res.status(400).json({ message: 'Payment reference is required' });
+    }
+
+    console.log('🔍 Looking for payment with reference:', reference);
+
+    const payment = await Payment.findOne({ paystackRef: reference });
+
+    if (!payment) {
+      console.warn('⚠️ No payment found for reference:', reference);
+      return res.status(404).json({ message: 'Payment not found' });
+    }
+
+    console.log('✅ Payment found:', {
+      id: payment._id,
+      amount: payment.amount,
+      status: payment.status,
+    });
+
+    return res.status(200).json({
+      message: 'Payment found',
+      payment: {
+        id: payment._id,
+        status: payment.status,
+        amount: payment.amount,
+        paidAt: payment.paidAt,
+        subscriptionId: payment.subscriptionId,
+        groupId: payment.groupId,
+      }
+    });
+
+  } catch (error) {
+    console.error('💥 Error checking payment status:', {
+      error: error.message,
+      stack: error.stack,
+    });
+
+    return res.status(500).json({ message: 'Server error while checking payment status' });
+  }
+};
