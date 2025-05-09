@@ -1,6 +1,11 @@
 const jwt = require('jsonwebtoken');
+const asyncHandler = require('express-async-handler');
 const User = require('../models/user');
 const crypto = require('crypto');
+const bcrypt = require('bcrypt');
+const { serialize } = require("cookie");
+
+
 const dotenv = require('dotenv');
 dotenv.config();
 const sendEmail = require('../utils/sendEmail')
@@ -316,92 +321,77 @@ exports.resendVerificationEmail = async (req, res) => {
 
 
 
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+exports.login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
-    console.log("🔹 Login Attempt - Email:", email);
+  console.log("🔹 [1/6] Login Attempt Initiated - Email:", email);
 
-    // Find the user by email
-    const user = await User.findOne({ email }).select('+password');
-
-    if (!user) {
-      console.log("❌ Login failed: user not found for email:", email);
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
-
-    console.log("🔍 User found:", user.email);
-
-    if (!user.isVerified) {
-      console.log("⚠️ Email not verified for user:", email);
-      return res.status(403).json({ message: 'Please verify your email before logging in.' });
-    }
-
-    console.log("✅ User email is verified.");
-
-    const isMatch = await user.matchPassword(password);
-
-    if (!isMatch) {
-      console.log("❌ Login failed: incorrect password for", email);
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
-
-    console.log("✅ Password matched for user:", email);
-
-    // Generate JWT token
-    console.log("🛠️ Generating JWT Token...");
-    const token = jwt.sign(
-      { userId: user._id, role: user.role },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-    console.log("✅ JWT Token generated");
-
-    console.log("🆔 UserID:", user._id.toString());
-    console.log("🎭 Role:", user.role);
-    console.log("📦 Onboarded:", user.onboarded);
-
- // Set token in a cookie
-res.cookie('token', token, {
-  httpOnly: true,
-  secure: true,  // Ensure secure cookies are set for production
-  sameSite: 'None',  // Required for cross-site cookies
-  domain: '.subchatpro.com', // Adjust to your production domain
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  path: '/',  // Make sure it's set for the root path
-});
-
-// Set role in a readable cookie (optional if needed by frontend)
-res.cookie('role', user.role, {
-  httpOnly: false,  // Set to false so it can be accessed from frontend (only if needed)
-  secure: true,     // Secure flag for production
-  sameSite: 'None', // SameSite=None for cross-site cookies
-  domain: '.subchatpro.com',
-  maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days
-  path: '/',  // Set to root path
-});
-
-
-
-    console.log("🔑 Sending response with user and token...");
-
-    res.status(200).json({
-      message: 'Login successful',
-      token,
-      user: {
-        id: user._id,
-        email: user.email,
-        role: user.role,
-        onboarded: user.onboarded,
-        isVerified: user.isVerified,
-      },
-    });
-
-  } catch (err) {
-    console.error("💥 Server error during login:", err);
-    res.status(500).json({ message: 'Server error', error: err.message });
+  if (!email || !password) {
+    console.log("❌ [1/6] Validation Failed - Missing email or password");
+    return res.status(400).json({ message: "Email and password are required" });
   }
-};
+
+  console.log("🔍 [2/6] Searching User in Database...");
+  const user = await User.findOne({ email }).select("+password +role +onboarding +isVerified");
+
+  if (!user) {
+    console.log("❌ [2/6] User Not Found - Email:", email);
+    return res.status(400).json({ message: "User not found" });
+  }
+
+  console.log("✅ [2/6] User Found - Details:", {
+    email: user.email,
+    role: user.role,
+    onboarding: user.onboarded,
+    isVerified: user.isVerified
+  });
+
+  console.log("🔐 [3/6] Password Verification Initiated");
+  const isMatch = await bcrypt.compare(password, user.password);
+  console.log(`🔐 [3/6] Password Match: ${isMatch ? "✅ Success" : "❌ Failed"}`);
+
+  if (!isMatch) {
+    console.log("❌ [3/6] Authentication Failed - Incorrect Password");
+    return res.status(400).json({ message: "Incorrect password" });
+  }
+
+  console.log("🛠️ [4/6] Generating JWT Token...");
+  const token = jwt.sign(
+    { userId: user._id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+
+  console.log("🔑 [4/6] Token Generated Successfully");
+
+  // 🔥 Set the token into a Secure HTTP-Only Cookie
+  const cookie = serialize('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/',
+    maxAge: 7 * 24 * 60 * 60, // 7 days
+  });
+
+  res.setHeader('Set-Cookie', cookie);
+
+  console.log("🚀 [5/5] Login Successful - Sending Response");
+
+  res.json({
+    message: "Login successful",
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      isVerified: user.isVerified,
+      onboarding: user.onboarded,
+    },
+  });
+});
+
+
+
 
 
 

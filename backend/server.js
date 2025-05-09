@@ -1,6 +1,4 @@
-
 // server.js
-
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
@@ -16,24 +14,36 @@ const app = express();
 
 // --- 🛡️ CORS Configuration ---
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL || "http://localhost:3000",
+  "http://localhost:3000",
+  "https://www.subchatpro.com"
+];
+
 app.use(cors({
-  origin: 'https://www.subchatpro.com',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.error(`❌ CORS not allowed for origin: ${origin}`);
+      callback(new Error("CORS not allowed"), false);
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token'],
-  exposedHeaders: ['set-cookie'] // ✅ important for cookies sometimes
+  exposedHeaders: ['set-cookie']
 }));
 
 // --- 🍪 Cookie Parser (MUST be early) ---
 app.use(cookieParser());
 
 // --- 📝 Body Parsers ---
-
-// Parse normal JSON payloads
-app.use(express.json());
-
-// Special body parser for Paystack webhook
+// Paystack raw webhook first
 app.use('/api/subscribe/paystack/webhook', bodyParser.raw({ type: 'application/json' }));
+
+// General body parser after
+app.use(express.json());
 
 // --- 📦 API Routes ---
 const authRoutes = require('./routes/authRoutes');
@@ -49,6 +59,11 @@ app.use('/api/groups', groupRoutes);
 app.use('/api/subscribe', subscriptionRoutes);
 app.use('/api/subscribe/paystack/webhook', paystackWebhookRoutes);
 app.use('/api/transactions', transactionRoutes);
+
+// --- 🌍 Root Endpoint ---
+app.get("/", (req, res) => {
+  res.send("SubChatPro Authentication API is running...");
+});
 
 // --- 🌍 MongoDB Connection ---
 mongoose.connect(process.env.MONGO_URI)
