@@ -376,13 +376,13 @@ exports.login = asyncHandler(async (req, res) => {
 
   // Serialize the token into a secure cookie
   const serialized = serialize('token', token, {
-    httpOnly: true, // Prevent JavaScript access to cookie
-    secure: true, // Only secure if in production environment
-    sameSite: 'None', // Allow cross-origin requests
-    path: '/', // Available for all routes
-    maxAge: 60 * 60 * 24 * 7, // 7 days expiration
+    httpOnly: true,
+    secure: true,
+    sameSite: 'None',
+    domain: '.subchatpro.com',
+    path: '/',
+    maxAge: 60 * 60 * 24 * 7,
   });
-
   // Log if the cookie is set correctly
   console.log("🔑 [4/6] Setting Cookie - Cookie Header: ", serialized);
 
