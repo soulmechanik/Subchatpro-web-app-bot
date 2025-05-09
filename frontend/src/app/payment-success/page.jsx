@@ -1,16 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation'; // ⭐ correct hook
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
-import styles from './PaymentSuccess.module.scss'; // adjust if needed
+import styles from './PaymentSuccess.module.scss';
 
-export default function PaymentSuccess() {
-  const searchParams = useSearchParams(); // ⭐ use this
+function PaymentChecker() {
+  const searchParams = useSearchParams();
   const reference = searchParams.get('reference');
   const trxref = searchParams.get('trxref');
 
-  const [status, setStatus] = useState('checking'); // 'checking', 'success', 'failed', 'error'
+  const [status, setStatus] = useState('checking');
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
@@ -73,5 +73,13 @@ export default function PaymentSuccess() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={<div className={styles.message}><h2>Loading...</h2></div>}>
+      <PaymentChecker />
+    </Suspense>
   );
 }
