@@ -377,7 +377,7 @@ exports.login = asyncHandler(async (req, res) => {
   // Serialize the token into a secure cookie
   const serialized = serialize('token', token, {
     httpOnly: true, // Prevent JavaScript access to cookie
-    secure: 'true', // Only secure if in production environment
+    secure: true, // Only secure if in production environment
     sameSite: 'None', // Allow cross-origin requests
     path: '/', // Available for all routes
     maxAge: 60 * 60 * 24 * 7, // 7 days expiration
