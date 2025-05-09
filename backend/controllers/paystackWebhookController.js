@@ -8,9 +8,19 @@ const sendEmail = require('../utils/sendEmail');
 
 exports.handleWebhook = async (req, res) => {
   console.log('🔄 Starting webhook processing');
+
   try {
-    const event = req.body;
+    // 🔥 Parse the raw buffer into JSON
+    let event;
+    try {
+      event = JSON.parse(req.body.toString());
+    } catch (parseErr) {
+      console.error('❌ Failed to parse webhook body:', parseErr.message);
+      return res.status(400).send('Invalid webhook payload');
+    }
+
     console.log('📩 Received event:', event?.event);
+    console.log('📦 Full Event Data:', JSON.stringify(event, null, 2));
 
     if (event?.event !== 'charge.success') {
       console.warn('⚠️ Unsupported event type:', event?.event);
@@ -20,7 +30,8 @@ exports.handleWebhook = async (req, res) => {
     const { data } = event;
     const reference = data.reference;
     const metadata = data.metadata || {};
-    console.log('🔍 Processing reference:', reference);
+
+    console.log('🔍 Processing payment reference:', reference);
 
     const existingPayment = await Payment.findOne({ paystackRef: reference });
     if (existingPayment?.status === 'success') {
@@ -29,13 +40,14 @@ exports.handleWebhook = async (req, res) => {
     }
 
     if (!metadata.groupId) {
-      console.error('❌ Missing groupId in metadata', { reference, metadata });
+      console.error('❌ Missing groupId in metadata:', { reference, metadata });
       return res.status(400).send('Missing groupId');
     }
 
     console.log('🔍 Fetching group:', metadata.groupId);
     const group = await Group.findById(metadata.groupId)
       .select('+subscriptionFrequency +groupName +ownerProfileId');
+
     if (!group) {
       console.error('❌ Group not found:', metadata.groupId);
       return res.status(404).send('Group not found');
@@ -182,11 +194,12 @@ exports.handleWebhook = async (req, res) => {
     console.error('💥 Webhook processing failed:', {
       error: err.message,
       stack: err.stack,
-      event: req.body
+      event: req.body.toString() // log the raw data
     });
     return res.status(500).send('Processing failed');
   }
 };
+
 
 
 // (Keep the existing sendConfirmationEmail, sendOwnerNotification, and calculateNewExpiry functions exactly as they were)
