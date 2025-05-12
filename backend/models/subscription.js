@@ -104,6 +104,14 @@ const subscriptionSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
+// Middleware to convert telegramUsername to lowercase before saving
+subscriptionSchema.pre('save', function (next) {
+  if (this.telegramUsername) {
+    this.telegramUsername = this.telegramUsername.toLowerCase();
+  }
+  next();
+});
+
 // Indexes for faster queries
 subscriptionSchema.index({ groupId: 1, status: 1 });
 subscriptionSchema.index({ expiresAt: 1, status: 1 });
