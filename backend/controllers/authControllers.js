@@ -360,6 +360,12 @@ exports.login = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Incorrect password" });
   }
 
+  // ✅ Check if user is verified
+  if (!user.isVerified) {
+    console.log("❌ [3.5/6] Authentication Failed - User not verified");
+    return res.status(403).json({ message: "Please verify your email before logging in." });
+  }
+
   console.log("🛠️ [4/6] Generating JWT Token...");
   
   // Generate a JWT token for the user
@@ -383,6 +389,7 @@ exports.login = asyncHandler(async (req, res) => {
     path: '/',
     maxAge: 60 * 60 * 24 * 7,
   });
+
   // Log if the cookie is set correctly
   console.log("🔑 [4/6] Setting Cookie - Cookie Header: ", serialized);
 
@@ -404,6 +411,7 @@ exports.login = asyncHandler(async (req, res) => {
     },
   });
 });
+
 
 
 
