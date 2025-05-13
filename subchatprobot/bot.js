@@ -466,7 +466,9 @@ async function startBot() {
     }
 
     console.log('⏳ Launching bot...');
+    await bot.telegram.deleteWebhook(); // <<< Add this line
     await bot.launch();
+    
     console.log('🤖 Bot started and running');
 
     // Start periodic checks
