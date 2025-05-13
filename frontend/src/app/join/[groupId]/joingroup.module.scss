@@ -195,3 +195,15 @@
     max-width: 480px;
     text-align: center;
   }
+
+  .inputError {
+    border-color: red;
+    background-color: #fff6f6;
+  }
+  
+  .errorText {
+    color: red;
+    font-size: 0.85rem;
+    margin-top: 4px;
+  }
+  

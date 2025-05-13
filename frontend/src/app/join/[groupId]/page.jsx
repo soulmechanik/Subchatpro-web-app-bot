@@ -21,6 +21,8 @@ export default function JoinGroupPage() {
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [telegramUsernameError, setTelegramUsernameError] = useState('');
+
   const [subscriberInfo, setSubscriberInfo] = useState({
     fullName: '',
     email: '',
@@ -34,14 +36,14 @@ export default function JoinGroupPage() {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/groups/${groupId}`);
         const contentType = res.headers.get('content-type');
-  
+
         if (!res.ok) {
           const errData = contentType?.includes('application/json')
             ? await res.json()
             : { message: await res.text() };
           throw new Error(errData.message || 'Failed to fetch group info');
         }
-  
+
         const data = await res.json();
         setGroup(data);
       } catch (err) {
@@ -51,7 +53,7 @@ export default function JoinGroupPage() {
         setLoading(false);
       }
     };
-  
+
     fetchGroup();
   }, [groupId]);
 
@@ -65,14 +67,30 @@ export default function JoinGroupPage() {
   };
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === 'telegramUsername') {
+      if (value.includes('@')) {
+        setTelegramUsernameError("Please remove the '@' symbol from your username.");
+      } else {
+        setTelegramUsernameError('');
+      }
+    }
+
     setSubscriberInfo({
       ...subscriberInfo,
-      [e.target.name]: e.target.value
+      [name]: value
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (telegramUsernameError) {
+      alert('Please correct the Telegram username before submitting.');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -191,26 +209,29 @@ export default function JoinGroupPage() {
 
             {/* Telegram Username */}
             <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>
-                <FiSend className={styles.inputIcon} />
-                Telegram Username <span style={{ fontSize: '0.85rem', opacity: 0.6 }}>(without @)</span>
-              </label>
-              <input
-                type="text"
-                name="telegramUsername"
-                value={subscriberInfo.telegramUsername}
-                onChange={handleChange}
-                required
-                className={styles.inputField}
-                placeholder="e.g. johndoe"
-              />
-            </div>
+  <label className={styles.inputLabel}>
+    <FiSend className={styles.inputIcon} />
+    Telegram Username <span style={{ fontSize: '0.85rem', opacity: 0.6 }}>(without @)</span>
+  </label>
+  <input
+    type="text"
+    name="telegramUsername"
+    value={subscriberInfo.telegramUsername}
+    onChange={handleChange}
+    required
+    className={`${styles.inputField} ${telegramUsernameError ? styles.inputError : ''}`}
+    placeholder="e.g. johndoe"
+  />
+  {telegramUsernameError && (
+    <p className={styles.errorText}>{telegramUsernameError}</p>
+  )}
+</div>
 
             {/* Submit Button */}
             <button
               type="submit"
               className={styles.submitButton}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !!telegramUsernameError}
             >
               {isSubmitting ? (
                 <>
