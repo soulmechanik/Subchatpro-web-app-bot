@@ -456,8 +456,15 @@ bot.on('message', async (ctx) => {
   const userId = ctx.from.id;
   const username = ctx.from.username;
 
-  if (!username) {
-    console.log(`⏩ Skipping user ${userId} - no username`);
+  // Skip if no username or sender is a bot
+  if (!username || ctx.from.is_bot) {
+    console.log(`⏩ Skipping ${ctx.from.is_bot ? 'bot' : 'user with no username'} (${userId})`);
+    return;
+  }
+
+  // Skip if the user is the bot itself
+  if (botInfo && userId === botInfo.id) {
+    console.log('⏩ Skipping self (bot)');
     return;
   }
 
@@ -475,6 +482,7 @@ bot.on('message', async (ctx) => {
     console.log(`✅ Message from subscribed user @${username}`);
   }
 });
+
 
 
 
