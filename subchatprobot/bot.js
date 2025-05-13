@@ -449,6 +449,37 @@ async function periodicSubscriptionCheck(chatId = null) {
 }
 
 
+bot.on('message', async (ctx) => {
+  if (ctx.chat.type !== 'supergroup' && ctx.chat.type !== 'group') return;
+
+  const chatId = ctx.chat.id;
+  const userId = ctx.from.id;
+  const username = ctx.from.username;
+
+  if (!username) {
+    console.log(`⏩ Skipping user ${userId} - no username`);
+    return;
+  }
+
+  const group = await Group.findOne({ telegramGroupId: chatId });
+  if (!group) {
+    console.log(`⏩ Group ${chatId} not registered`);
+    return;
+  }
+
+  const isSubscribed = await hasActiveSubscription(username, group._id);
+  if (!isSubscribed) {
+    console.log(`❌ Message from unsubscribed user @${username} - removing`);
+    await removeNonSubscriber(chatId, userId, username);
+  } else {
+    console.log(`✅ Message from subscribed user @${username}`);
+  }
+});
+
+
+
+
+
 // ======================
 // 8. STARTUP
 // ======================
@@ -486,6 +517,11 @@ async function startBot() {
     process.exit(1);
   }
 }
+
+
+
+
+
 
 // Graceful shutdown
 process.once('SIGINT', () => {
