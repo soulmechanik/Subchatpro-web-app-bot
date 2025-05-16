@@ -98,7 +98,8 @@ export default function JoinGroupPage() {
         ...subscriberInfo,
         groupId,
         amount: group.subscriptionPrice,
-        callback_url: `${window.location.origin}/subscription/callback`
+        callback_url: `${window.location.origin}/payment-success`
+
       };
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/subscribe/initialize`, {
@@ -113,7 +114,8 @@ export default function JoinGroupPage() {
         throw new Error(data.message || 'Payment initiation failed');
       }
 
-      window.open(data.authorization_url, '_blank');
+   window.location.href = data.authorization_url;
+
 
     } catch (err) {
       console.error('Error during subscription:', err);
