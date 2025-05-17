@@ -401,4 +401,3 @@ function calculateNewExpiry(startDate, frequency) {
   return date;
 }
 
-

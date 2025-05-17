@@ -390,6 +390,7 @@ exports.login = asyncHandler(async (req, res) => {
     maxAge: 60 * 60 * 24 * 7,
   });
 
+
   // Log if the cookie is set correctly
   console.log("🔑 [4/6] Setting Cookie - Cookie Header: ", serialized);
 

@@ -49,6 +49,7 @@ const groupRoutes = require('./routes/grouproutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const paystackWebhookRoutes = require('./routes/paystackWebhookRoutes');
 const transactionRoutes = require('./routes/transactionsRoutes');
+const paystackRoutes = require('./routes/paystackRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/groupowner', groupOwnerRoutes);
@@ -56,7 +57,7 @@ app.use('/api/groups', groupRoutes);
 app.use('/api/subscribe', subscriptionRoutes);
 app.use('/api/subscribe/paystack/webhook', paystackWebhookRoutes);
 app.use('/api/transactions', transactionRoutes);
-
+app.use('/api/paystack', paystackRoutes); 
 // --- 🌍 Root Endpoint ---
 app.get("/", (req, res) => {
   res.send("SubChatPro Authentication API is running...");
