@@ -209,8 +209,8 @@ export default function JoinGroupPage() {
               />
             </div>
 
-            {/* Telegram Username */}
-            <div className={styles.inputGroup}>
+        {/* Telegram Username */}
+<div className={styles.inputGroup}>
   <label className={styles.inputLabel}>
     <FiSend className={styles.inputIcon} />
     Telegram Username <span style={{ fontSize: '0.85rem', opacity: 0.6 }}>(without @)</span>
@@ -224,6 +224,11 @@ export default function JoinGroupPage() {
     className={`${styles.inputField} ${telegramUsernameError ? styles.inputError : ''}`}
     placeholder="e.g. johndoe"
   />
+  <div className={styles.telegramInstructions}>
+    <p>⚠️ We need your Telegram username to grant access!</p>
+    <p>➡️ Go to Telegram settings → Set your @username</p>
+    <p>✅ Then return to complete payment.</p>
+  </div>
   {telegramUsernameError && (
     <p className={styles.errorText}>{telegramUsernameError}</p>
   )}
