@@ -30,6 +30,14 @@ const groupOwnerProfileSchema = new mongoose.Schema({
     bankName: { 
       type: String, 
       required: true 
+    },
+    bankCode: { // ✅ Add this
+      type: String,
+      required: true
+    },
+    recipientCode: { // ✅ Add this too
+      type: String,
+      required: true
     }
   },
   groups: [{

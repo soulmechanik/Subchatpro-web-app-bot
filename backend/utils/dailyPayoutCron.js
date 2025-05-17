@@ -51,10 +51,15 @@ const payoutCronJob = cron.schedule('0 1 * * *', async () => {
           continue;
         }
 
-        const { accountNumber, bankName, accountHolderName } = ownerProfile.bankDetails;
+        const {
+          accountNumber,
+          bankName,
+          accountHolderName,
+          recipientCode
+        } = ownerProfile.bankDetails;
 
-        if (!accountNumber || !bankName) {
-          console.warn(`⚠️ Incomplete bank details for owner ${ownerProfile._id}`);
+        if (!accountNumber || !bankName || !recipientCode) {
+          console.warn(`⚠️ Incomplete bank details or recipient code missing for owner ${ownerProfile._id}`);
           continue;
         }
 
@@ -63,11 +68,11 @@ const payoutCronJob = cron.schedule('0 1 * * *', async () => {
         const payoutAmount = payment.amount * (1 - platformFee); // 95% of the amount
         const amountInKobo = Math.round(payoutAmount * 100);
 
-        // Initiate Paystack Transfer
+        // Initiate Paystack Transfer using stored recipientCode
         const transferPayload = {
           source: "balance",
           amount: amountInKobo,
-          recipient: await resolveRecipient(accountNumber, bankName, accountHolderName),
+          recipient: recipientCode,
           reason: `Payout for subscription - ${group.groupName}`
         };
 
@@ -101,48 +106,5 @@ const payoutCronJob = cron.schedule('0 1 * * *', async () => {
     console.error('💥 Daily payout cron job error:', err.message);
   }
 });
-
-// Function to resolve account and create transfer recipient
-const resolveRecipient = async (accountNumber, bankName, accountHolderName) => {
-  const bankCode = await getBankCode(bankName);
-
-  if (!bankCode) {
-    throw new Error(`Bank code not found for bank: ${bankName}`);
-  }
-
-  // Create a transfer recipient
-  const response = await axios.post(
-    'https://api.paystack.co/transferrecipient',
-    {
-      type: 'nuban',
-      name: accountHolderName,
-      account_number: accountNumber,
-      bank_code: bankCode,
-      currency: 'NGN'
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-        'Content-Type': 'application/json'
-      }
-    }
-  );
-
-  return response.data.data.recipient_code;
-};
-
-// Function to get Paystack bank code
-const getBankCode = async (bankName) => {
-  const response = await axios.get('https://api.paystack.co/bank', {
-    headers: {
-      Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`
-    }
-  });
-
-  const banks = response.data.data;
-  const bank = banks.find(b => b.name.toLowerCase() === bankName.toLowerCase());
-
-  return bank?.code;
-};
 
 module.exports = payoutCronJob;

@@ -1,4 +1,5 @@
 // controllers/groupOwner.js
+const axios = require('axios');
 const mongoose = require('mongoose');
 const asyncHandler = require('express-async-handler');
 const GroupOwner = require('../models/groupowners');
@@ -12,43 +13,89 @@ const backendUrl = process.env.BACKEND_URL || "http://localhost:5002/";
 // Onboard Group Owner
 
 exports.onboardGroupOwnerController = asyncHandler(async (req, res) => {
-    const { name, phoneNumber, telegramUsername, accountHolderName, accountNumber, bankName } = req.body;
-  
-    if (!name || !phoneNumber || !accountHolderName || !accountNumber || !bankName) {
-      res.status(400);
-      throw new Error('All required fields must be filled.');
+  const {
+    name,
+    phoneNumber,
+    telegramUsername,
+    accountHolderName,
+    accountNumber,
+    bankName
+  } = req.body;
+
+  if (!name || !phoneNumber || !accountHolderName || !accountNumber || !bankName) {
+    res.status(400);
+    throw new Error('All required fields must be filled.');
+  }
+
+  const existingProfile = await GroupOwner.findOne({ userId: req.user._id });
+  if (existingProfile) {
+    res.status(400);
+    throw new Error('This user already has a Group Owner profile.');
+  }
+
+  // Step 1: Get bank code from Paystack
+  const bankListResponse = await axios.get('https://api.paystack.co/bank', {
+    headers: {
+      Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`
     }
-  
-    const existingProfile = await GroupOwner.findOne({ userId: req.user._id });
-    if (existingProfile) {
-      res.status(400);
-      throw new Error('This user already has a Group Owner profile.');
-    }
-  
-    // Create the GroupOwner profile
-    const profile = await GroupOwner.create({
-      userId: req.user._id, 
-      name,
-      phoneNumber,
-      telegramUsername,
-      bankDetails: {
-        accountHolderName,
-        accountNumber,
-        bankName
-      }
-    });
-  
-    // Log success
-    console.log(`Group Owner onboarded successfully: ${profile._id}`);
-  
-    // Update the onboarded status of the user
-    await User.findByIdAndUpdate(req.user._id, { onboarded: true });
-  
-    res.status(201).json({
-      message: 'Group Owner onboarded successfully.',
-      profile
-    });
   });
+
+  const bank = bankListResponse.data.data.find(
+    b => b.name.toLowerCase() === bankName.toLowerCase()
+  );
+
+  if (!bank) {
+    res.status(400);
+    throw new Error('Bank name not found on Paystack.');
+  }
+
+  const bankCode = bank.code;
+
+  // Step 2: Create transfer recipient
+  const recipientResponse = await axios.post(
+    'https://api.paystack.co/transferrecipient',
+    {
+      type: 'nuban',
+      name: accountHolderName,
+      account_number: accountNumber,
+      bank_code: bankCode,
+      currency: 'NGN'
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+
+  const recipientCode = recipientResponse.data.data.recipient_code;
+
+  // Step 3: Create the GroupOwner profile
+  const profile = await GroupOwner.create({
+    userId: req.user._id,
+    name,
+    phoneNumber,
+    telegramUsername,
+    bankDetails: {
+      accountHolderName,
+      accountNumber,
+      bankName,
+      bankCode,
+      recipientCode
+    }
+  });
+
+  console.log(`✅ Group Owner onboarded successfully: ${profile._id}`);
+
+  // Step 4: Update onboarded status on user
+  await User.findByIdAndUpdate(req.user._id, { onboarded: true });
+
+  res.status(201).json({
+    message: 'Group Owner onboarded successfully.',
+    profile
+  });
+});
   
   
   exports.createNewGroupController = asyncHandler(async (req, res) => {
@@ -373,22 +420,84 @@ exports.getSettings = async (req, res) => {
 };
 
 // PUT /api/settings
+
+
+// Helper to get Paystack bank list and find bank code by name
+const getBankCode = async (bankName) => {
+  const response = await axios.get('https://api.paystack.co/bank', {
+    headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` }
+  });
+  const banks = response.data.data;
+  const bank = banks.find(b => b.name.toLowerCase() === bankName.toLowerCase());
+  return bank?.code;
+};
+
+// Helper to resolve account number to account name via Paystack
+const resolveAccountName = async (accountNumber, bankCode) => {
+  const response = await axios.get(
+    `https://api.paystack.co/bank/resolve?account_number=${accountNumber}&bank_code=${bankCode}`,
+    {
+      headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` }
+    }
+  );
+  return response.data.data.account_name;
+};
+
+// Helper to create or update Paystack transfer recipient
+const createTransferRecipient = async (accountHolderName, accountNumber, bankCode) => {
+  const response = await axios.post(
+    'https://api.paystack.co/transferrecipient',
+    {
+      type: 'nuban',
+      name: accountHolderName,
+      account_number: accountNumber,
+      bank_code: bankCode,
+      currency: 'NGN'
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+  return response.data.data.recipient_code;
+};
+
+// PUT /api/settings
 exports.updateSettings = async (req, res) => {
   try {
     const userId = req.user.userId;
-    console.log("✏️ Received update request for userId:", userId);
-
     const objectId = new mongoose.Types.ObjectId(userId);
 
     const { name, phoneNumber, telegramUsername, bankDetails } = req.body;
 
-    console.log("📦 New data received:", {
-      name,
-      phoneNumber,
-      telegramUsername,
-      bankDetails
-    });
+    let updatedBankDetails = null;
 
+    if (bankDetails && bankDetails.accountNumber && bankDetails.bankName) {
+      // 1. Get bank code
+      const bankCode = await getBankCode(bankDetails.bankName);
+      if (!bankCode) {
+        return res.status(400).json({ message: 'Invalid bank name.' });
+      }
+
+      // 2. Resolve account name from Paystack
+      const accountHolderName = await resolveAccountName(bankDetails.accountNumber, bankCode);
+
+      // 3. Create transfer recipient on Paystack
+      const recipientCode = await createTransferRecipient(accountHolderName, bankDetails.accountNumber, bankCode);
+
+      // Prepare bank details object to save
+      updatedBankDetails = {
+        accountHolderName,
+        accountNumber: bankDetails.accountNumber,
+        bankName: bankDetails.bankName,
+        bankCode,
+        recipientCode
+      };
+    }
+
+    // Update the user profile in DB
     const updated = await GroupOwner.findOneAndUpdate(
       { userId: objectId },
       {
@@ -396,31 +505,22 @@ exports.updateSettings = async (req, res) => {
           ...(name && { name }),
           ...(phoneNumber && { phoneNumber }),
           ...(telegramUsername && { telegramUsername }),
-          ...(bankDetails && {
-            bankDetails: {
-              accountHolderName: bankDetails.accountHolderName,
-              accountNumber: bankDetails.accountNumber,
-              bankName: bankDetails.bankName
-            }
-          })
+          ...(updatedBankDetails && { bankDetails: updatedBankDetails })
         }
       },
       { new: true }
     );
 
     if (!updated) {
-      console.log("❌ No GroupOwner found to update.");
       return res.status(404).json({ message: 'Profile not found.' });
     }
-
-    console.log("✅ Profile updated successfully:", updated);
 
     res.status(200).json({
       message: 'Profile updated successfully.',
       updatedProfile: updated
     });
   } catch (error) {
-    console.error("🔥 Error updating settings:", error);
+    console.error("🔥 Error updating settings:", error.response?.data || error.message);
     res.status(500).json({ message: 'Something went wrong.' });
   }
 };

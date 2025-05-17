@@ -380,7 +380,8 @@ exports.login = asyncHandler(async (req, res) => {
   // Log the token for debugging
   console.log("🔑 [4/6] Token: ", token);
 
-  // Serialize the token into a secure cookie
+ 
+// Serialize the token into a secure cookie
   const serialized = serialize('token', token, {
     httpOnly: true,
     secure: true,
@@ -389,7 +390,6 @@ exports.login = asyncHandler(async (req, res) => {
     path: '/',
     maxAge: 60 * 60 * 24 * 7,
   });
-
 
   // Log if the cookie is set correctly
   console.log("🔑 [4/6] Setting Cookie - Cookie Header: ", serialized);
