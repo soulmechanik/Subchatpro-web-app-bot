@@ -13,9 +13,9 @@ const getTodayRange = () => {
   return { start, end };
 };
 
-// Initialize Cron Job (runs at 00:15 UTC, which is 1:15 AM Nigerian time)
-const payoutCronJob = cron.schedule('47 0 * * *', async () => {
-  console.log('🕒 Daily payout cron job started');
+// Initialize Cron Job to run every 1 minute
+const payoutCronJob = cron.schedule('*/1 * * * *', async () => {
+  console.log(new Date().toISOString(), '🕒 Daily payout cron job started');
 
   try {
     const { start, end } = getTodayRange();
@@ -27,25 +27,25 @@ const payoutCronJob = cron.schedule('47 0 * * *', async () => {
     });
 
     if (payments.length === 0) {
-      console.log('ℹ️ No successful payments found for today.');
+      console.log(new Date().toISOString(), 'ℹ️ No successful payments found for today.');
       return;
     }
 
-    console.log(`🔍 Found ${payments.length} payments to process`);
+    console.log(new Date().toISOString(), `🔍 Found ${payments.length} payments to process`);
 
     for (const payment of payments) {
       try {
         const group = await Group.findById(payment.groupId).select('ownerProfileId groupName');
 
         if (!group) {
-          console.warn(`⚠️ Group not found for payment ${payment._id}`);
+          console.warn(new Date().toISOString(), `⚠️ Group not found for payment ${payment._id}`);
           continue;
         }
 
         const ownerProfile = await GroupOwnerProfile.findById(group.ownerProfileId).lean();
 
         if (!ownerProfile || !ownerProfile.bankDetails) {
-          console.warn(`⚠️ Owner or bank details missing for group ${group._id}`);
+          console.warn(new Date().toISOString(), `⚠️ Owner or bank details missing for group ${group._id}`);
           continue;
         }
 
@@ -57,7 +57,7 @@ const payoutCronJob = cron.schedule('47 0 * * *', async () => {
         } = ownerProfile.bankDetails;
 
         if (!accountNumber || !bankName || !recipientCode) {
-          console.warn(`⚠️ Incomplete bank details or recipient code missing for owner ${ownerProfile._id}`);
+          console.warn(new Date().toISOString(), `⚠️ Incomplete bank details or recipient code missing for owner ${ownerProfile._id}`);
           continue;
         }
 
@@ -85,7 +85,7 @@ const payoutCronJob = cron.schedule('47 0 * * *', async () => {
           }
         );
 
-        console.log(`✅ Transfer initiated for payment ${payment._id}: Transfer ID ${transferResponse.data.data.id}`);
+        console.log(new Date().toISOString(), `✅ Transfer initiated for payment ${payment._id}: Transfer ID ${transferResponse.data.data.id}`);
 
         // Update payment
         payment.transferStatus = 'success';
@@ -93,20 +93,20 @@ const payoutCronJob = cron.schedule('47 0 * * *', async () => {
         await payment.save();
 
       } catch (innerErr) {
-        console.error(`❌ Failed to process payment ${payment._id}:`, innerErr.message);
+        console.error(new Date().toISOString(), `❌ Failed to process payment ${payment._id}:`, innerErr.message);
         await Payment.findByIdAndUpdate(payment._id, { transferStatus: 'failed' });
       }
     }
 
-    console.log('✅ Daily payout cron job completed.');
+    console.log(new Date().toISOString(), '✅ Daily payout cron job completed.');
 
   } catch (err) {
-    console.error('💥 Daily payout cron job error:', err.message);
+    console.error(new Date().toISOString(), '💥 Daily payout cron job error:', err.message);
   }
 });
 
-
+// Start the cron job immediately on load
 payoutCronJob.start();
-console.log('🟢 Daily payout cron job scheduled and started.');
+console.log(new Date().toISOString(), '🟢 Daily payout cron job scheduled and started.');
 
 module.exports = payoutCronJob;
