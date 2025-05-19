@@ -1,5 +1,3 @@
-// utils/dailyPayoutCron.js
-
 const cron = require('node-cron');
 const axios = require('axios');
 const Payment = require('../models/payment'); // adjust path if needed
@@ -15,8 +13,8 @@ const getTodayRange = () => {
   return { start, end };
 };
 
-// Initialize Cron Job
-const payoutCronJob = cron.schedule('0 1 * * *', async () => {
+// Initialize Cron Job (runs at 00:15 UTC, which is 1:15 AM Nigerian time)
+const payoutCronJob = cron.schedule('15 0 * * *', async () => {
   console.log('🕒 Daily payout cron job started');
 
   try {
