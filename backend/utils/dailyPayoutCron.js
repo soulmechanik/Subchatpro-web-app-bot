@@ -66,13 +66,14 @@ const payoutCronJob = cron.schedule('*/1 * * * *', async () => {
         const payoutAmount = payment.amount * (1 - platformFee); // 95% of the amount
         const amountInKobo = Math.round(payoutAmount * 100);
 
-        // Initiate Paystack Transfer using stored recipientCode
         const transferPayload = {
           source: "balance",
           amount: amountInKobo,
           recipient: recipientCode,
           reason: `Payout for subscription - ${group.groupName}`
         };
+
+        console.log(new Date().toISOString(), '📦 Sending transfer payload:', transferPayload);
 
         const transferResponse = await axios.post(
           'https://api.paystack.co/transfer',
@@ -93,7 +94,9 @@ const payoutCronJob = cron.schedule('*/1 * * * *', async () => {
         await payment.save();
 
       } catch (innerErr) {
-        console.error(new Date().toISOString(), `❌ Failed to process payment ${payment._id}:`, innerErr.message);
+        const paystackError = innerErr.response?.data || innerErr.message;
+        console.error(new Date().toISOString(), `❌ Failed to process payment ${payment._id}:`, paystackError);
+
         await Payment.findByIdAndUpdate(payment._id, { transferStatus: 'failed' });
       }
     }
