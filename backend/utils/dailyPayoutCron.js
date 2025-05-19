@@ -14,7 +14,7 @@ const getTodayRange = () => {
 };
 
 // Initialize Cron Job (runs at 00:15 UTC, which is 1:15 AM Nigerian time)
-const payoutCronJob = cron.schedule('15 0 * * *', async () => {
+const payoutCronJob = cron.schedule('22 0 * * *', async () => {
   console.log('🕒 Daily payout cron job started');
 
   try {

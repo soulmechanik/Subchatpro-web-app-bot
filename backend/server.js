@@ -63,6 +63,8 @@ app.get("/", (req, res) => {
   res.send("SubChatPro Authentication API is running...");
 });
 
+require('./utils/dailyPayoutCron');
+
 // --- 🌍 MongoDB Connection ---
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
