@@ -13,8 +13,8 @@ const getTodayRange = () => {
   return { start, end };
 };
 
-// 🕒 Schedule the job to run at 00:22 UTC (which is 1:22 AM Nigerian time)
-const payoutCronJob = cron.schedule('35 0 * * *', async () => {
+// Initialize Cron Job (runs at 00:15 UTC, which is 1:15 AM Nigerian time)
+const payoutCronJob = cron.schedule('47 0 * * *', async () => {
   console.log('🕒 Daily payout cron job started');
 
   try {
@@ -105,14 +105,8 @@ const payoutCronJob = cron.schedule('35 0 * * *', async () => {
   }
 });
 
-// ✅ Start the job
-payoutCronJob.start();
-console.log('🟢 Daily payout cron job has been scheduled and started.');
 
-// ✅ Optional: trigger manually if RUN_PAYOUT_NOW=true is set in env
-if (process.env.RUN_PAYOUT_NOW === 'true') {
-  console.log('🧪 RUN_PAYOUT_NOW=true detected. Running cron immediately...');
-  payoutCronJob.fireOnTick();
-}
+payoutCronJob.start();
+console.log('🟢 Daily payout cron job scheduled and started.');
 
 module.exports = payoutCronJob;
