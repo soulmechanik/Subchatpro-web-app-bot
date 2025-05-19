@@ -14,7 +14,7 @@ const getTodayRange = () => {
 };
 
 // Initialize Cron Job to run every 1 minute
-const payoutCronJob = cron.schedule('*/1 * * * *', async () => {
+const payoutCronJob = cron.schedule('0 1 * * *', async () => {
   console.log(new Date().toISOString(), '🕒 Daily payout cron job started');
 
   try {
